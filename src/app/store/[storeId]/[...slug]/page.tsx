@@ -17,6 +17,7 @@ import StorePage from '../page';
 import StoreCategoryPage from '../category/[categoryName]/page';
 import AboutPage from '../about/page';
 import ReturnPolicyPage from '../return-policy/page';
+import CatalogPage from '../catalog/page';
 import { useToast } from '@/hooks/use-toast';
 import { getStoreBasePath } from '@/lib/url';
 import { ProductCard } from '@/components/store-product-card';
@@ -468,10 +469,14 @@ export default function StoreSlugPage() {
       return notFound();
   }
   
+  if (page === 'catalog') {
+      return <CatalogPage />;
+  }
+
   if (page === 'category' && slugParams.length > 1) {
       return <StoreCategoryPage />;
   }
-  
+
   if (page === 'about') {
       return <AboutPage />;
   }

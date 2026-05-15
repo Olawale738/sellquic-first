@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { Product } from "@/types/product";
 import { Metadata, ResolvingMetadata } from 'next';
 import { VisitTracker } from '@/components/store/VisitTracker';
-import { resolveTheme } from '@/themes';
+import { resolveTheme, resolveThemeByCategory } from '@/themes';
 import { StoreHeader } from '@/components/store-header';
 import { StoreFooter } from '@/components/store-footer';
 import { PromoBar } from '@/components/promo-bar';
@@ -155,8 +155,8 @@ export async function generateMetadata(
     };
   }
   
-  const seoTitle = storeData.marketing?.seo?.title || storeData.name;
-  const seoDescription = storeData.marketing?.seo?.description || storeData.tagline || `Shop at ${storeData.name}`;
+  const seoTitle = storeData.marketing?.seo?.title || storeData.storefrontConfig?.seo?.page_title || storeData.name;
+  const seoDescription = storeData.marketing?.seo?.description || storeData.storefrontConfig?.seo?.meta_description || storeData.tagline || `Shop at ${storeData.name}`;
 
 
   const previousImages = (await parent).openGraph?.images || [];
@@ -205,7 +205,10 @@ export default async function StoreLayout({
   if (storeData.comingSoon) return <ComingSoon store={storeData} />; // 👈 Added Coming Soon!
 
   const isCustomDomain = params.storeId.includes('.');
-  const activeTheme = resolveTheme(storeData.theme);
+  // Use explicit theme → AI-generated category theme → classic
+  const activeTheme = storeData.theme
+    ? resolveTheme(storeData.theme)
+    : resolveThemeByCategory(storeData.storefrontConfig?.theme_category || storeData.category);
   
   const themeColors = { ...activeTheme.colors };
   if (storeData.brandColor) {

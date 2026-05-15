@@ -50,9 +50,21 @@ export function StoreFooter() {
                             <Image src={store.logoUrl} alt={`${store.name} logo`} width={40} height={40} className="rounded-full mb-2"/>
                         )}
                         <p className="font-bold text-lg">{store.name}</p>
-                        <p className="text-sm text-muted-foreground">{store.tagline}</p>
+                        <p className="text-sm text-muted-foreground">
+                            {store.storefrontConfig?.footer?.description || store.tagline}
+                        </p>
                     </div>
                     
+
+                    <div className="flex flex-col items-center md:items-start text-center md:text-left">
+                        <h3 className="font-semibold mb-2">Shop</h3>
+                        <div className="flex flex-col gap-1">
+                            <Link href={`${basePath}/catalog`} className="text-sm text-muted-foreground hover:text-primary">All Products</Link>
+                            {store.categories?.slice(0, 3).map((cat: any) => (
+                                <Link key={cat.id} href={`${basePath}/category/${cat.name.toLowerCase().replace(/\s+/g, '-')}`} className="text-sm text-muted-foreground hover:text-primary">{cat.name}</Link>
+                            ))}
+                        </div>
+                    </div>
 
                     {hasInfoPages && (
                         <div className="flex flex-col items-center md:items-start text-center md:text-left">
@@ -61,6 +73,7 @@ export function StoreFooter() {
                                 {store.isAboutUsActive && <Link href={`${basePath}/about`} className="text-sm text-muted-foreground hover:text-primary">About Us</Link>}
                                 {deliveryPolicyText && <Link href={`${basePath}/shipping-policy`} className="text-sm text-muted-foreground hover:text-primary">Shipping Policy</Link>}
                                 {store.isReturnPolicyActive && <Link href={`${basePath}/return-policy`} className="text-sm text-muted-foreground hover:text-primary">Return Policy</Link>}
+                                <Link href={`${basePath}#track-order`} className="text-sm text-muted-foreground hover:text-primary">Track Order</Link>
                             </div>
                         </div>
                     )}

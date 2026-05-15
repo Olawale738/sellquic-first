@@ -27,15 +27,23 @@ export const StoreBreadcrumbs = ({ product }: StoreBreadcrumbsProps) => {
 
     const isProductPage = pathname.includes('/products/');
     const isCheckoutPage = pathname.includes('/checkout');
+    const isCatalogPage = pathname.includes('/catalog');
 
     return (
         <nav className="flex items-center text-sm text-muted-foreground">
             <Link href={basePath || '/'} className="hover:text-primary">Home</Link>
-            
+
+            {isCatalogPage && (
+                <>
+                    <ChevronRight className="h-4 w-4 mx-1" />
+                    <span className="font-medium text-foreground">Collection</span>
+                </>
+            )}
+
             {isProductPage && product && (
                  <>
                     <ChevronRight className="h-4 w-4 mx-1" />
-                    {product.category && <span className="font-medium text-foreground">{product.category}</span>}
+                    {product.category && <Link href={`${basePath}/catalog`} className="hover:text-primary">{product.category}</Link>}
                  </>
             )}
 

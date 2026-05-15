@@ -47,7 +47,8 @@ const MainMenuSheet = () => {
                  </SheetHeader>
                  <nav className="flex-1 overflow-y-auto px-6 space-y-2 pt-4">
                     <Link href={basePath || '/'} onClick={() => setIsSheetOpen(false)} className="block py-2 font-medium hover:text-primary">Home</Link>
-                    
+                    <Link href={`${basePath}/catalog`} onClick={() => setIsSheetOpen(false)} className="block py-2 font-medium hover:text-primary">Shop / Collection</Link>
+
                     {store.categories && store.categories.length > 0 && (
                       <Collapsible>
                           <CollapsibleTrigger className="w-full flex items-center justify-between py-2 font-medium hover:text-primary">
@@ -62,6 +63,7 @@ const MainMenuSheet = () => {
                       </Collapsible>
                     )}
 
+                    <Link href={`${basePath}#track-order`} onClick={() => setIsSheetOpen(false)} className="block py-2 text-muted-foreground hover:text-primary">Track Order</Link>
                     {store?.isAboutUsActive && <Link href={`${basePath}/about`} onClick={() => setIsSheetOpen(false)} className="block py-2 text-muted-foreground hover:text-primary">About Us</Link>}
                     {store?.isReturnPolicyActive && <Link href={`${basePath}/return-policy`} onClick={() => setIsSheetOpen(false)} className="block py-2 text-muted-foreground hover:text-primary">Return Policy</Link>}
                  </nav>
