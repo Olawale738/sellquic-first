@@ -1,0 +1,141 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default: Deny all reads and writes
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Global Read Rules ---
+    // Allow any authenticated user to read public platform settings
+    match /settings/platform {
+      allow read: if request.auth != null;
+    }
+
+    // --- Helper Functions ---
+    // Allow superadmin to read anything
+    function isSuperAdmin() {
+      return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'superadmin';
+    }
+
+    // --- Collection-Specific Rules ---
+    // Users collection
+    match /users/{userId} {
+      allow read: if isSuperAdmin() || (request.auth != null && request.auth.uid == userId);
+      allow create: if request.auth != null; // Allows any authenticated user to create their own user doc
+      allow update: if isSuperAdmin() || (request.auth != null && request.auth.uid == userId);
+
+      // Referrals subcollection under each user
+      match /referrals/{referralId} {
+        // Only the user themselves can read their own referrals
+        allow read: if request.auth != null && request.auth.uid == userId;
+        // Referrals are created via a backend process (signup flow), not directly by users
+        allow write: if false;
+      }
+    }
+    
+    // Stores collection
+    match /stores/{storeId} {
+      allow read: if true; // Publicly readable for store pages
+      allow create: if request.auth != null && request.resource.data.sellerId == request.auth.uid;
+      allow update, delete: if isSuperAdmin() || (request.auth != null && resource.data.sellerId == request.auth.uid);
+
+      // Visits subcollection
+      match /visits/{visitId} {
+        allow read: if isSuperAdmin();
+        allow create: if true; // Allow anyone to create visit records
+        allow update, delete: if false; // No one should update/delete visits
+      }
+      
+      // AI Conversations subcollection
+      match /ai_conversations/{conversationId} {
+        allow read: if true; // Allow anyone to read to check handover status
+        allow write: if request.auth != null && get(/databases/$(database)/documents/stores/$(storeId)).data.sellerId == request.auth.uid;
+        
+        // Messages within a conversation
+        match /messages/{messageId} {
+          // Anyone can read messages to view the conversation history
+          allow read: if true;
+          // Writes are only handled by the backend, so no client writes are allowed.
+          allow write: if false;
+        }
+      }
+
+      // Inbox Threads subcollection - VENDOR CANNOT READ THIS DIRECTLY
+      match /inboxThreads/{threadId} {
+        // Only allow backend processes to write to this. Client reads are forbidden.
+        allow read: if false; 
+        allow write: if request.auth != null && get(/databases/$(database)/documents/stores/$(storeId)).data.sellerId == request.auth.uid;
+      }
+      
+      // All other subcollections under stores (e.g. categories, deliveries)
+      match /{subcollection}/{docId} {
+        allow read, write: if request.auth != null && get(/databases/$(database)/documents/stores/$(storeId)).data.sellerId == request.auth.uid;
+      }
+    }
+    
+    // Allow superadmin to read groups of collections for analytics
+    match /stores/{storeId}/visits/{visitId} {
+        allow read: if isSuperAdmin();
+    }
+    
+    // Products collection
+    match /products/{productId} {
+      allow read: if true; // Publicly readable for store pages
+      allow create, update, delete: if request.auth != null && request.resource.data.sellerId == request.auth.uid;
+    }
+    
+    // Orders collection
+    match /orders/{orderId} {
+      allow read: if isSuperAdmin() || (request.auth != null && resource.data.sellerId == request.auth.uid) || (get(/databases/$(database)/documents/orders/$(orderId)).data.customerInfo.phone == request.auth.token.phone_number);
+      allow create: if true; // Anyone can create an order
+      allow update: if request.auth != null && resource.data.sellerId == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.sellerId == request.auth.uid;
+    }
+    
+    // Abandoned Checkouts Collection
+    match /abandoned_checkouts/{checkoutId} {
+        // Allow store owner to read and delete their own abandoned checkouts
+        allow read, delete: if isSuperAdmin() || (request.auth != null && get(/databases/$(database)/documents/stores/$(resource.data.storeId)).data.sellerId == request.auth.uid);
+        // Only allow creation/updates from unauthenticated sessions (silent capture) or server-side processes
+        allow create, update: if true;
+    }
+
+    // Admin-only collections
+    match /affiliates/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+
+    match /coupons/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+
+    match /coupon_redemptions/{docId} {
+        allow read: if isSuperAdmin();
+        allow create: if request.auth != null; // Allow any user to create their own redemption record
+    }
+    
+    match /manualUpgradeRequests/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+    
+    match /transactions/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+
+    match /domain_requests/{docId} {
+      allow read, write: if isSuperAdmin();
+    }
+
+    // Vendor WhatsApp Messaging
+    match /vendor_whatsapp_campaigns/{campaignId} {
+      allow read, write: if isSuperAdmin();
+      
+      match /recipients/{recipientId} {
+        allow read, write: if isSuperAdmin();
+      }
+    }
+  }
+}

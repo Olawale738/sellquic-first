@@ -1,0 +1,14 @@
+diff --git a/node_modules/@babel/eslint-parser/package.json b/node_modules/@babel/eslint-parser/package.json
+index 5218732..91c3258 100644
+--- a/node_modules/@babel/eslint-parser/package.json
++++ b/node_modules/@babel/eslint-parser/package.json
+@@ -34,7 +34,7 @@
+     "@babel/highlight": "^7.24.7",
+     "@babel/options": "^7.24.7",
+     "@babel/parser": "^7.24.7",
+-    "@babel/traverse": "^7.24.7",
+-    "@babel/types": "^7.24.7"
++    "@babel/traverse": "7.23.2",
++    "@babel/types": "7.23.0"
+   },
+   "devDependencies": {

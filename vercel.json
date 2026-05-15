@@ -1,0 +1,32 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/recover-carts",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/refresh-ig-tokens",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/generate-daily-reports",
+      "schedule": "0 23 * * *"
+    },
+    {
+      "path": "/api/cron/run-email-automations",
+      "schedule": "*/30 * * * *"
+    },
+    {
+      "path": "/api/cron/send-scheduled-campaigns",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/subscription-check",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/nudge-conversations",
+      "schedule": "*/2 * * * *"
+    }
+  ]
+}

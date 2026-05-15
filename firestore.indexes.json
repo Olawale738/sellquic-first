@@ -1,0 +1,12 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "ai_v2_turn_logs",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

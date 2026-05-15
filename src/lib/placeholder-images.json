@@ -1,0 +1,157 @@
+{
+  "placeholderImages": [
+
+
+
+    {
+      "id": "theme-preview-classic",
+      "imageUrl": "https://picsum.photos/seed/theme-classic/800/600",
+      "imageHint": "classic theme preview"
+    },
+    {
+      "id": "theme-preview-onyx",
+      "imageUrl": "https://picsum.photos/seed/theme-onyx/800/600",
+      "imageHint": "onyx theme preview"
+    },
+    {
+      "id": "theme-preview-glow",
+      "imageUrl": "https://picsum.photos/seed/theme-glow/800/600",
+      "imageHint": "glow theme preview"
+    },
+    {
+      "id": "theme-preview-urban",
+      "imageUrl": "https://picsum.photos/seed/theme-urban/800/600",
+      "imageHint": "urban theme preview"
+    },
+    {
+      "id": "hero-fashion",
+      "imageUrl": "https://picsum.photos/seed/hero-fashion/1600/900",
+      "imageHint": "fashion model"
+    },
+    {
+      "id": "hero-beauty",
+      "imageUrl": "https://picsum.photos/seed/hero-beauty/1600/900",
+      "imageHint": "beauty skincare"
+    },
+    {
+      "id": "product-1",
+      "imageUrl": "https://picsum.photos/seed/product-1/600/400",
+      "imageHint": "product shoes"
+    },
+    {
+      "id": "product-2",
+      "imageUrl": "https://picsum.photos/seed/product-2/600/400",
+      "imageHint": "product watch"
+    },
+    {
+      "id": "product-1",
+      "imageUrl": "https://picsum.photos/seed/p1/600/400",
+      "imageHint": "product item"
+    },
+    {
+      "id": "product-2",
+      "imageUrl": "https://picsum.photos/seed/p2/600/400",
+      "imageHint": "product item"
+    },
+    {
+      "id": "product-3",
+      "imageUrl": "https://picsum.photos/seed/product-3/600/400",
+      "imageHint": "product sunglasses"
+    },
+    {
+      "id": "showcase-fashion",
+      "imageUrl": "https://picsum.photos/seed/showcase-fashion/600/400",
+      "imageHint": "fashion clothing"
+    },
+    {
+      "id": "showcase-electronics",
+      "imageUrl": "https://picsum.photos/seed/showcase-electronics/600/400",
+      "imageHint": "gadgets electronics"
+    },
+    {
+      "id": "showcase-home-decor",
+      "imageUrl": "https://picsum.photos/seed/showcase-home-decor/600/400",
+      "imageHint": "home decor"
+    },
+    {
+      "id": "showcase-beauty-makeup",
+      "imageUrl": "https://picsum.photos/seed/showcase-beauty-makeup/600/400",
+      "imageHint": "beauty makeup"
+    },
+    {
+      "id": "showcase-gadgets",
+      "imageUrl": "https://picsum.photos/seed/showcase-gadgets/600/400",
+      "imageHint": "tech gadgets"
+    },
+    {
+      "id": "showcase-food-drinks",
+      "imageUrl": "https://picsum.photos/seed/showcase-food-drinks/600/400",
+      "imageHint": "food drinks"
+    },
+    {
+      "id": "404-cat",
+      "imageUrl": "https://picsum.photos/seed/404cat/250/250",
+      "imageHint": "confused cat"
+    },
+    {
+      "id": "paystack-logo",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/sellquic.firebasestorage.app/o/payment%20logos%2Fpaystack%20(4).png?alt=media&token=30312a99-ae45-4c57-9f1b-8e787f9da190",
+      "imageHint": "paystack logo"
+    },
+    {
+      "id": "momo-logo",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/sellquic.firebasestorage.app/o/payment%20logos%2F8858B851-C89C-4C96-816A-6DD5F6443E03_1_201_a.jpeg?alt=media&token=b5e6fc9a-28e7-4362-94bf-631165e0b0a4",
+      "imageHint": "momo logo"
+    },
+    {
+      "id": "cod-logo",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/sellquic.firebasestorage.app/o/payment%20logos%2FCash-on-Delivery.jpg?alt=media&token=80a3f6d4-b8cc-4c18-9420-e137618f3c6b",
+      "imageHint": "cash delivery"
+    },
+    {
+      "id": "glow-hero",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/sellquic.firebasestorage.app/o/themes%2FSKINCARE%20IS%20SELFCARE.png?alt=media&token=a6354d32-8f87-4afc-920d-5cffe8c08235",
+      "imageHint": "beauty skincare"
+    },
+    {
+      "id": "glow-promo",
+      "imageUrl": "https://picsum.photos/seed/glowpromo/800/600",
+      "imageHint": "skincare products"
+    },
+    {
+      "id": "glow-category-1",
+      "imageUrl": "https://picsum.photos/seed/glowcat1/400/400",
+      "imageHint": "face serum"
+    },
+    {
+      "id": "glow-category-2",
+      "imageUrl": "https://picsum.photos/seed/glowcat2/400/400",
+      "imageHint": "makeup palette"
+    },
+    {
+      "id": "urban-hero",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/sellquic.firebasestorage.app/o/themes%2FSKINCARE%20IS%20SELFCARE%20(1).png?alt=media&token=18b50da0-3349-4798-96f3-647ab232e765",
+      "imageHint": "street fashion"
+    },
+    {
+      "id": "urban-promo",
+      "imageUrl": "https://picsum.photos/seed/urbanpromo/800/600",
+      "imageHint": "sneakers"
+    },
+    {
+      "id": "urban-category-1",
+      "imageUrl": "https://picsum.photos/seed/urbancat1/400/400",
+      "imageHint": "hoodie"
+    },
+    {
+      "id": "urban-category-2",
+      "imageUrl": "https://picsum.photos/seed/urbancat2/400/400",
+      "imageHint": "cap"
+    },
+    {
+      "id": "onyx-promo-section",
+      "imageUrl": "https://picsum.photos/seed/onyxpromo/800/600",
+      "imageHint": "luxury watch"
+    }
+  ]
+}

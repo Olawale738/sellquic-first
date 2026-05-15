@@ -1,0 +1,53 @@
+# Node modules
+/node_modules
+/.pnp
+.pnp.js
+
+# Next.js build output
+/.next/
+/out/
+
+# Production build
+/build
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE/editor files
+.vscode
+.idea
+
+# Firebase & Secrets (keep these out of Git)
+firebase-service-account.json
+firebase-key.json
+.firebaserc
+
+# Testing
+/coverage
+
+# Allow project JSON and TS files in src
+!src/**/*.ts
+!src/**/*.tsx
+!src/**/*.json
+
+# Sentry Config File
+.env.sentry-build-plugin
