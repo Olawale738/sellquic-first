@@ -5,8 +5,99 @@ import { Resend } from 'resend';
 import { revalidatePath } from 'next/cache';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { slugify } from './utils';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// ─── Default categories per business type ────────────────────────────────────
+const DEFAULT_CATEGORIES: Record<string, string[]> = {
+  fashion:     ['Dresses', 'Tops & Blouses', 'Shoes', 'Bags', 'Accessories'],
+  clothing:    ['Men', 'Women', 'Kids', 'Shoes', 'Accessories'],
+  food:        ['Meals', 'Snacks', 'Drinks', 'Catering'],
+  restaurant:  ['Main Course', 'Starters', 'Drinks', 'Desserts'],
+  beauty:      ['Skincare', 'Haircare', 'Makeup', 'Fragrance'],
+  cosmetics:   ['Face', 'Lips', 'Eyes', 'Body'],
+  electronics: ['Phones', 'Gadgets', 'Accessories', 'Repairs'],
+  tech:        ['Phones', 'Laptops', 'Accessories', 'Smart Devices'],
+  furniture:   ['Living Room', 'Bedroom', 'Office', 'Decor'],
+  home:        ['Living Room', 'Kitchen', 'Bedroom', 'Garden'],
+  groceries:   ['Fresh Food', 'Pantry', 'Drinks', 'Household'],
+  services:    ['Packages', 'Bookings', 'Consultations', 'Custom Requests'],
+  general:     ['New Arrivals', 'Best Sellers', 'Featured', 'Sale'],
+};
+
+function getDefaultCategories(category: string): string[] {
+  const key = (category || '').toLowerCase().trim();
+  return (
+    DEFAULT_CATEGORIES[key] ||
+    DEFAULT_CATEGORIES['general']
+  );
+}
+
+// ─── AI storefront config generator ─────────────────────────────────────────
+async function generateStorefrontConfig(
+  businessName: string,
+  category: string,
+  subcategory: string,
+  email: string,
+  phone: string,
+) {
+  try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+    const prompt = `You are SellQuic AI Storefront Builder.
+Generate a complete storefront configuration JSON for this vendor. Return ONLY valid JSON, no markdown, no explanation.
+
+Vendor details:
+- Store Name: ${businessName}
+- Business Category: ${category}
+- Subcategory: ${subcategory || category}
+- Email: ${email}
+- Phone: ${phone}
+
+JSON structure (fill every field with real, persuasive copy — never use Lorem ipsum):
+{
+  "storefront_name": "",
+  "theme_name": "",
+  "theme_category": "",
+  "color_palette": { "primary": "", "secondary": "", "accent": "", "background": "", "text": "" },
+  "typography": { "heading_font_style": "", "body_font_style": "" },
+  "navigation": [],
+  "hero": { "headline": "", "subheadline": "", "primary_cta": "", "secondary_cta": "", "visual_direction": "" },
+  "categories": [{ "name": "", "description": "", "theme_style": "", "editable": true }],
+  "featured_products": [{ "name": "", "category": "", "description": "", "price_placeholder": "", "image_prompt": "", "variants": [], "editable": true }],
+  "catalog_layout": { "style": "", "filters": [], "sorting_options": [], "product_card_style": "" },
+  "cart": { "empty_state": "", "subtotal_label": "", "checkout_cta": "" },
+  "order_tracking": { "headline": "", "description": "", "input_placeholder": "", "cta": "" },
+  "help_section": { "headline": "", "description": "", "cta": "" },
+  "about_section": { "headline": "", "description": "" },
+  "contact_section": { "email": "${email}", "phone": "${phone}", "location": "", "whatsapp_enabled": true },
+  "footer": { "store_name": "${businessName}", "description": "", "links": [], "copyright": "", "powered_by": "SellQuic" },
+  "editable_fields": [],
+  "recommended_admin_controls": [],
+  "seo": { "page_title": "", "meta_description": "", "keywords": [] }
+}
+
+Rules:
+- theme_category must be one of: fashion, food, beauty, electronics, furniture, groceries, services, general
+- color_palette values must be valid hex codes
+- navigation must include: Shop, Categories, Track Order, Contact
+- categories: 4-6 entries matching the vendor's type
+- featured_products: 4-6 realistic placeholder products
+- About section tone must match the category
+- Return ONLY the JSON object.`;
+
+    const result = await model.generateContent(prompt);
+    const raw = result.response.text().trim();
+    const match = raw.match(/\{[\s\S]*\}/);
+    if (!match) return null;
+    return JSON.parse(match[0]);
+  } catch (err) {
+    console.error('[generateStorefrontConfig]', err);
+    return null;
+  }
+}
 
 function generateReferralCode(name: string) {
   const prefix = (name || 'USER')
@@ -138,6 +229,8 @@ interface VerifyParams {
   businessName: string;
   phone: string;
   affiliateCode?: string;
+  businessCategory?: string;
+  subcategory?: string;
 }
 
 export async function verifyOtpAction(
@@ -163,6 +256,8 @@ export async function verifyOtpAction(
       businessName: userIdOrParams.businessName,
       phone: userIdOrParams.phone,
       affiliateCode: userIdOrParams.affiliateCode,
+      businessCategory: userIdOrParams.businessCategory,
+      subcategory: userIdOrParams.subcategory,
     };
   }
 
@@ -418,11 +513,15 @@ let subscriptionConfig: any = {
 
 
       // Create store
+      const category = signupData.businessCategory || 'general';
+      const subcategory = signupData.subcategory || category;
       const storeRef = db.collection('stores').doc();
       batch.set(storeRef, {
         sellerId: userId,
         name: signupData.businessName,
         subdomain: businessNameSlug,
+        category,
+        subcategory,
         createdAt: FieldValue.serverTimestamp(),
         status: 'active',
         aiAssistant: {
@@ -465,6 +564,38 @@ let subscriptionConfig: any = {
       }
 
       await batch.commit();
+
+      // ─── Auto-build: create default categories + AI storefront config ───
+      try {
+        const defaultCats = getDefaultCategories(category);
+        const catWritePromises = defaultCats.map((name) =>
+          storeRef.collection('categories').add({
+            name,
+            createdAt: FieldValue.serverTimestamp(),
+          })
+        );
+
+        const [storefrontConfig] = await Promise.all([
+          generateStorefrontConfig(
+            signupData!.businessName,
+            category,
+            subcategory,
+            signupData!.email,
+            signupData!.phone,
+          ),
+          ...catWritePromises,
+        ]);
+
+        if (storefrontConfig) {
+          await storeRef.update({
+            storefrontConfig,
+            storefrontGeneratedAt: FieldValue.serverTimestamp(),
+          });
+        }
+      } catch (buildErr) {
+        // Non-fatal — store is created, categories or AI config failed silently
+        console.error('[auto-build storefront]', buildErr);
+      }
 
       // Welcome email
       try {
