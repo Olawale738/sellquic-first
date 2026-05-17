@@ -291,15 +291,14 @@ function StoreProductGridInner() {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-1">Collection</p>
             <h2 className="text-2xl font-bold tracking-tight">Our Products</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              {totalCount === 0
-                ? 'No products found'
-                : totalCount === 1
-                  ? '1 product'
-                  : `${totalCount} products`}
-              {filter !== 'all' && ` in ${filter}`}
-            </p>
+            {totalCount > 0 && (
+              <p className="text-sm text-muted-foreground mt-1">
+                {totalCount === 1 ? '1 product' : `${totalCount} products`}
+                {filter !== 'all' && ` in ${filter}`}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -455,17 +454,37 @@ function StoreProductGridInner() {
 
       {totalCount === 0 && (
         <div className="text-center py-20 col-span-full">
-          <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-            <SlidersHorizontal className="h-7 w-7 text-muted-foreground" />
-          </div>
-          <h3 className="text-lg font-semibold mb-1">No products found</h3>
-          <p className="text-muted-foreground text-sm mb-4">
-            Try adjusting your filters or search term.
-          </p>
-          {hasActiveFilters && (
-            <Button variant="outline" onClick={clearAllFilters}>
-              Clear all filters
-            </Button>
+          {hasActiveFilters ? (
+            <>
+              <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                <SlidersHorizontal className="h-7 w-7 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-semibold mb-1">No products found</h3>
+              <p className="text-muted-foreground text-sm mb-4">
+                Try adjusting your filters or search term.
+              </p>
+              <Button variant="outline" onClick={clearAllFilters}>
+                Clear all filters
+              </Button>
+            </>
+          ) : (
+            <>
+              <div className="mx-auto w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6 text-4xl">
+                🛍️
+              </div>
+              <h3 className="text-xl font-bold mb-2">Products Coming Soon</h3>
+              <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
+                We&apos;re busy curating amazing products just for you. Check back soon — exciting things are on the way!
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Button variant="outline" asChild>
+                  <a href="#track-order">Track an Order</a>
+                </Button>
+                <Button asChild>
+                  <a href="#help">Contact Us</a>
+                </Button>
+              </div>
+            </>
           )}
         </div>
       )}
