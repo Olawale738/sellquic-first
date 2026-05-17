@@ -76,7 +76,7 @@ if (sellerSnap.exists && sellerData?.status === 'suspended') {
 }
 
 // Subscription gate — suspends:
-//   • pending_plan (new user hasn't picked yet)
+//   • pending_plan (after 7-day grace window)
 //   • expired trial
 //   • expired paid
 //   • no subscription
@@ -84,9 +84,22 @@ if (sellerSnap.exists && sellerData?.status === 'suspended') {
 //   • active paid (endDate in future)
 //   • active trial (trialEndsAt in future)
 //   • legacy free (planId === 'free')
+//   • pending_plan within 7 days of account creation (grace window for pre-trial users)
 if (sellerSnap.exists && sellerData?.subscription !== undefined) {
   if (!hasCommerceAccess(sellerData.subscription)) {
-    isSuspended = true;
+    // Grace window: pending_plan accounts created < 7 days ago still get access.
+    const isPendingPlan = sellerData.subscription?.status === 'pending_plan';
+    let withinGracePeriod = false;
+    if (isPendingPlan && sellerData.createdAt) {
+      const created: Date =
+        typeof sellerData.createdAt.toDate === 'function'
+          ? sellerData.createdAt.toDate()
+          : new Date(sellerData.createdAt);
+      withinGracePeriod = Date.now() - created.getTime() < 7 * 24 * 60 * 60 * 1000;
+    }
+    if (!withinGracePeriod) {
+      isSuspended = true;
+    }
   }
 }
 // --- END SUSPENSION LOGIC ---

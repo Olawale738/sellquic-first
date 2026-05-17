@@ -388,56 +388,42 @@ export async function verifyOtpAction(
       const trialConfig = adminSettings.trial;
 
       // 🌟 THE VIP CODES YOUR TEAM WILL GIVE OUT ON CALLS
-      const VIP_CODES = ['VIP14', 'LAUNCH14', 'SELLQUIC14']; 
+      const VIP_CODES = ['VIP14', 'LAUNCH14', 'SELLQUIC14'];
       const isVipCodeUsed = resolvedAffiliateCode && VIP_CODES.includes(resolvedAffiliateCode);
 
-     
-     // Default: vendor must choose a plan or start a 7-day trial.
-let subscriptionConfig: any = {
-  planId: null,
-  status: 'pending_plan',
-  startDate: null,
-  endDate: null,
-  trialEndsAt: null,
-  billingCycle: null,
-  hasUsedTrial: false,
-  updatedAt: FieldValue.serverTimestamp(),
-};
+      // Auto-start a trial for every new signup so the store is live from day one.
+      // VIP code holders get 14 days; everyone else gets 7 days (or admin-configured value).
+      const trialDays = isVipCodeUsed ? 14 : (trialConfig?.durationDays || 7);
+      const trialEndsAt = new Date();
+      trialEndsAt.setDate(trialEndsAt.getDate() + trialDays);
+
+      let subscriptionConfig: any = {
+        planId: 'trial',
+        status: 'trial',
+        trialEndsAt: Timestamp.fromMillis(trialEndsAt.getTime()),
+        startDate: Timestamp.fromDate(new Date()),
+        endDate: null,
+        billingCycle: null,
+        hasUsedTrial: true,
+        updatedAt: FieldValue.serverTimestamp(),
+      };
       let initialCredits = 0;
       let promoAccessConfig: any = null;
 
       if (isVipCodeUsed) {
-        // 🚀 VIP OVERRIDE: Give them 14 Days of AI via Promo Access
-        const trialEndsAt = new Date();
-        trialEndsAt.setDate(trialEndsAt.getDate() + 14);
-
+        // 🚀 VIP BONUS: Extra AI credits on top of the 14-day trial
         promoAccessConfig = {
           type: 'launch_offer',
           startsAt: FieldValue.serverTimestamp(),
-          endsAt: Timestamp.fromMillis(trialEndsAt.getTime()), // ✅ Fixed to Timestamp
+          endsAt: Timestamp.fromMillis(trialEndsAt.getTime()),
           grantedBy: 'signup_code',
           grantedAt: FieldValue.serverTimestamp(),
           revokedAt: null,
-          notes: `Used code: ${resolvedAffiliateCode}`
+          notes: `Used code: ${resolvedAffiliateCode}`,
         };
         initialCredits = 1000;
-
-      /** } else if (trialConfig?.active) {
-        // 🌍 NORMAL PUBLIC TRIAL (Only if Admin turns it on)
-        const trialDuration = trialConfig.durationDays || 7;
-        const trialEndsAt = new Date();
-        trialEndsAt.setDate(trialEndsAt.getDate() + trialDuration);
-
-        promoAccessConfig = {
-          type: 'public_trial',
-          startsAt: FieldValue.serverTimestamp(),
-          endsAt: Timestamp.fromMillis(trialEndsAt.getTime()), // ✅ Fixed to Timestamp
-          grantedBy: 'system',
-          grantedAt: FieldValue.serverTimestamp(),
-          revokedAt: null,
-          notes: 'Standard Public Trial'
-        }; */
-        initialCredits = trialConfig.aiCredits || 500;
+      } else {
+        initialCredits = trialConfig?.aiCredits || 500;
       }
       const batch = db.batch();
 
