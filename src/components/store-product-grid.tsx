@@ -291,8 +291,8 @@ function StoreProductGridInner() {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-1">Collection</p>
-            <h2 className="text-2xl font-bold tracking-tight">Our Products</h2>
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-1">Just landed</p>
+            <h2 className="text-2xl font-bold tracking-tight">New arrivals</h2>
             {totalCount > 0 && (
               <p className="text-sm text-muted-foreground mt-1">
                 {totalCount === 1 ? '1 product' : `${totalCount} products`}

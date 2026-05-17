@@ -8,35 +8,6 @@ import { SearchForm } from "./store/SearchForm";
 import { cn } from "@/lib/utils";
 import { getStoreBasePath } from "@/lib/url";
 
-const CATEGORY_GRADIENTS: Record<string, string> = {
-  fashion:     'from-purple-600 via-pink-500 to-rose-400',
-  clothing:    'from-purple-600 via-pink-500 to-rose-400',
-  food:        'from-orange-500 via-amber-400 to-yellow-300',
-  restaurant:  'from-orange-600 via-red-500 to-orange-400',
-  beauty:      'from-rose-500 via-pink-400 to-fuchsia-300',
-  skincare:    'from-rose-500 via-pink-400 to-fuchsia-300',
-  electronics: 'from-blue-600 via-indigo-500 to-violet-400',
-  technology:  'from-blue-600 via-indigo-500 to-violet-400',
-  furniture:   'from-amber-600 via-orange-400 to-yellow-300',
-  home:        'from-amber-600 via-orange-400 to-yellow-300',
-  groceries:   'from-green-600 via-emerald-500 to-teal-400',
-  grocery:     'from-green-600 via-emerald-500 to-teal-400',
-  services:    'from-indigo-600 via-violet-500 to-purple-400',
-  health:      'from-teal-500 via-green-400 to-emerald-300',
-  sports:      'from-sky-600 via-blue-500 to-indigo-400',
-  books:       'from-amber-700 via-orange-600 to-yellow-500',
-};
-
-const CATEGORY_FEATURES: Record<string, string[]> = {
-  fashion:     ['Free returns on all orders', 'Authentic products guaranteed', 'Nationwide delivery'],
-  food:        ['Fresh & hygienically prepared', 'Same-day delivery available', 'Customizable orders'],
-  beauty:      ['100% authentic products', 'Dermatologist recommended', 'Secure packaging'],
-  electronics: ['Official warranty included', 'Genuine products only', 'Tech support available'],
-  furniture:   ['White-glove delivery available', 'Assembly support included', '30-day return policy'],
-  groceries:   ['Farm-fresh produce', 'Same-day delivery', 'Best quality guaranteed'],
-  services:    ['Experienced professionals', 'Satisfaction guaranteed', 'Flexible scheduling'],
-};
-
 const CATEGORY_TAGLINES: Record<string, string> = {
   fashion:     'Discover the latest styles and trends',
   clothing:    'Dress to impress with our curated collections',
@@ -54,6 +25,16 @@ const CATEGORY_TAGLINES: Record<string, string> = {
   health:      'Your wellness journey starts here',
   sports:      'Gear up for greatness',
   books:       'Knowledge is power — explore our collection',
+};
+
+const CATEGORY_FEATURES: Record<string, string[]> = {
+  fashion:     ['Free returns on all orders', 'Authentic products guaranteed', 'Nationwide delivery'],
+  food:        ['Fresh & hygienically prepared', 'Same-day delivery available', 'Customizable orders'],
+  beauty:      ['100% authentic products', 'Dermatologist recommended', 'Secure packaging'],
+  electronics: ['Official warranty included', 'Genuine products only', 'Tech support available'],
+  furniture:   ['White-glove delivery available', 'Assembly support included', '30-day return policy'],
+  groceries:   ['Farm-fresh produce', 'Same-day delivery', 'Best quality guaranteed'],
+  services:    ['Experienced professionals', 'Satisfaction guaranteed', 'Flexible scheduling'],
 };
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -74,15 +55,6 @@ const CATEGORY_ICONS: Record<string, string> = {
   sports:      '⚽',
   books:       '📚',
 };
-
-function getCategoryGradient(category?: string): string {
-  if (!category) return 'from-primary via-primary/80 to-primary/60';
-  const cat = category.toLowerCase();
-  for (const [key, val] of Object.entries(CATEGORY_GRADIENTS)) {
-    if (cat.includes(key)) return val;
-  }
-  return 'from-primary via-primary/80 to-primary/60';
-}
 
 function getCategoryTagline(category?: string): string {
   if (!category) return 'Discover amazing products at great prices';
@@ -120,19 +92,16 @@ export function StoreHero() {
   const aiHero = store?.storefrontConfig?.hero;
   const hasHeroImage = store?.isHeroBannerActive && store?.heroImageUrl;
 
-  const headline = store?.heroHeadline || aiHero?.headline || store?.name;
+  const headline = store?.heroHeadline || aiHero?.headline || `Welcome to ${store?.name}`;
   const subheadline = aiHero?.subheadline || store?.tagline || getCategoryTagline(store?.category);
-  const primaryCta = store?.heroCtaText || aiHero?.primary_cta || 'Shop Now';
-  const secondaryCta = aiHero?.secondary_cta || 'Track My Order';
-
-  const gradient = getCategoryGradient(store?.category);
+  const primaryCta = store?.heroCtaText || aiHero?.primary_cta || 'Shop Collection';
   const features = getCategoryFeatures(store?.category);
   const categoryIcon = getCategoryIcon(store?.category);
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Background */}
-      {hasHeroImage ? (
+    <section className={cn('bg-secondary border-b', hasHeroImage && 'relative overflow-hidden')}>
+      {/* Hero image with dark overlay */}
+      {hasHeroImage && (
         <>
           <Image
             src={store.heroImageUrl!}
@@ -141,62 +110,61 @@ export function StoreHero() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
-        </>
-      ) : (
-        <>
-          <div className={cn('absolute inset-0 bg-gradient-to-br', gradient)} />
-          {/* Decorative blobs */}
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-black/10 rounded-full translate-y-1/2 -translate-x-1/4 blur-2xl pointer-events-none" />
-          <div className="absolute top-1/2 left-1/2 w-[600px] h-[200px] bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl pointer-events-none" />
+          <div className="absolute inset-0 bg-black/55" />
         </>
       )}
 
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 md:px-6 py-16 md:py-24 lg:py-32">
-        <div className="max-w-2xl mx-auto text-center space-y-5">
-          {/* Store logo */}
-          {store.logoUrl && (
-            <div className="flex justify-center mb-2">
-              <div className="h-16 w-16 md:h-20 md:w-20 rounded-2xl overflow-hidden bg-white/20 backdrop-blur-sm border border-white/40 shadow-xl flex items-center justify-center">
-                <Image
-                  src={store.logoUrl}
-                  alt={store.name}
-                  width={72}
-                  height={72}
-                  className="object-contain p-1.5"
-                />
-              </div>
+      {/* Editorial content */}
+      <div className={cn(
+        'relative z-10 container mx-auto px-4 md:px-6 py-16 md:py-24',
+        hasHeroImage ? 'text-white' : 'text-foreground'
+      )}>
+        <div className="max-w-xl mx-auto text-center space-y-6">
+
+          {/* Category icon — only shown when no hero image */}
+          {!hasHeroImage && (
+            <div className="text-5xl md:text-6xl mb-2 select-none" aria-hidden="true">
+              {categoryIcon}
             </div>
           )}
 
-          {/* Category badge */}
+          {/* Small category badge */}
           {store.category && (
-            <div className="flex justify-center">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-medium">
-                <span>{categoryIcon}</span>
-                <span className="capitalize">{store.category}</span>
-              </span>
-            </div>
+            <p className={cn(
+              'text-xs font-semibold uppercase tracking-widest',
+              hasHeroImage ? 'text-white/70' : 'text-primary'
+            )}>
+              {store.category}
+            </p>
           )}
 
-          {/* Headline */}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-sm">
+          {/* Main headline */}
+          <h1 className={cn(
+            'text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight',
+            hasHeroImage ? 'text-white drop-shadow-sm' : 'text-foreground'
+          )}>
             {headline}
           </h1>
 
           {/* Subheadline */}
           {subheadline && (
-            <p className="text-base md:text-lg lg:text-xl text-white/85 max-w-xl mx-auto leading-relaxed">
+            <p className={cn(
+              'text-base md:text-lg leading-relaxed max-w-md mx-auto',
+              hasHeroImage ? 'text-white/80' : 'text-muted-foreground'
+            )}>
               {subheadline}
             </p>
           )}
 
-          {/* Search bar */}
-          <div className="max-w-md mx-auto w-full">
+          {/* Search */}
+          <div className="max-w-sm mx-auto w-full">
             <SearchForm
-              inputClassName="h-12 text-base rounded-full shadow-xl border-0 bg-white text-foreground placeholder:text-muted-foreground"
+              inputClassName={cn(
+                'h-11 text-sm rounded-full border shadow-sm',
+                hasHeroImage
+                  ? 'bg-white text-foreground placeholder:text-muted-foreground border-0 shadow-lg'
+                  : 'bg-background text-foreground placeholder:text-muted-foreground'
+              )}
             />
           </div>
 
@@ -204,7 +172,12 @@ export function StoreHero() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-1">
             <Button
               size="lg"
-              className="rounded-full px-8 bg-white text-gray-900 hover:bg-gray-100 shadow-lg font-semibold text-base transition-transform hover:scale-105"
+              className={cn(
+                'rounded-full px-8 font-semibold text-sm transition-transform hover:scale-105',
+                hasHeroImage
+                  ? 'bg-white text-gray-900 hover:bg-gray-100 shadow-md'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90'
+              )}
               asChild
             >
               <Link href={`${basePath}/catalog`}>{primaryCta}</Link>
@@ -212,28 +185,41 @@ export function StoreHero() {
             <Button
               size="lg"
               variant="outline"
-              className="rounded-full px-8 border-white/60 text-white hover:bg-white/15 backdrop-blur-sm text-base transition-transform hover:scale-105"
+              className={cn(
+                'rounded-full px-8 text-sm transition-transform hover:scale-105',
+                hasHeroImage
+                  ? 'border-white/50 text-white hover:bg-white/10 backdrop-blur-sm'
+                  : 'border-border text-foreground hover:bg-secondary'
+              )}
               asChild
             >
-              <Link href="#track-order">{secondaryCta}</Link>
+              <Link href="#track-order">Track My Order</Link>
             </Button>
           </div>
         </div>
       </div>
 
       {/* Trust strip */}
-      <div className="relative z-10 border-t border-white/20 bg-black/25 backdrop-blur-sm">
+      <div className={cn(
+        'relative z-10 border-t',
+        hasHeroImage
+          ? 'border-white/20 bg-black/30 backdrop-blur-sm'
+          : 'border-border bg-background/60'
+      )}>
         <div className="container mx-auto px-4 md:px-6 py-3">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-white/90 text-sm">
+          <div className={cn(
+            'flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-sm',
+            hasHeroImage ? 'text-white/80' : 'text-muted-foreground'
+          )}>
             {features.map((f, i) => (
               <div key={i} className="flex items-center gap-1.5">
-                <span className="text-green-300 font-bold">✓</span>
+                <span className="text-primary font-bold">✓</span>
                 <span>{f}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

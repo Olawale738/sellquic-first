@@ -141,7 +141,7 @@ const CartSheet = () => {
 }
 
 export function StoreHeader() {
-    const { store } = useStore();
+    const { store, isDemo } = useStore();
 
     if (!store) {
         return (
@@ -153,25 +153,52 @@ export function StoreHeader() {
         )
     }
 
-    const basePath = getStoreBasePath(store.subdomain);
+    const basePath = isDemo ? `/demo/${store.slug}` : getStoreBasePath(store.subdomain);
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container h-16 flex items-center justify-between">
-                <div className="flex-1 flex items-center justify-start">
+            <div className="container h-16 flex items-center justify-between gap-4">
+                {/* Mobile: hamburger left */}
+                <div className="flex items-center sm:hidden">
                     <MainMenuSheet />
                 </div>
-                
-                <div className="flex-shrink-0">
+
+                {/* Logo + store name (left on desktop, center on mobile) */}
+                <div className="flex-shrink-0 flex flex-col items-center sm:items-start">
                     <Link href={basePath || '/'} className="flex items-center gap-2">
                         {store.logoUrl && (
-                            <Image src={store.logoUrl} alt={`${store.name} logo`} width={44} height={44} className="rounded-full" />
+                            <Image src={store.logoUrl} alt={`${store.name} logo`} width={36} height={36} className="rounded-full" />
                         )}
-                        <span className="font-bold text-lg hidden sm:inline-block">{store.name}</span>
+                        <span className="font-bold text-base sm:text-lg">{store.name}</span>
                     </Link>
+                    <span className="hidden md:block text-xs text-muted-foreground leading-none mt-0.5">
+                        Secure &amp; fast delivery
+                    </span>
                 </div>
 
-                <div className="flex-1 flex items-center justify-end pr-2">
+                {/* Desktop nav links — center-right */}
+                <nav className="hidden sm:flex items-center gap-6 flex-1 justify-center sm:justify-end sm:mr-4">
+                    <Link href={`${basePath}/catalog`} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
+                        Shop
+                    </Link>
+                    <Link href={`${basePath}#track-order`} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
+                        Track Order
+                    </Link>
+                    {store?.isAboutUsActive && (
+                        <Link href={`${basePath}/about`} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
+                            Contact
+                        </Link>
+                    )}
+                    {!store?.isAboutUsActive && (
+                        <Link href={`${basePath}#contact`} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
+                            Contact
+                        </Link>
+                    )}
+                    {/* Mobile menu hidden on sm+ — only shown via MainMenuSheet on mobile */}
+                </nav>
+
+                {/* Cart always far right */}
+                <div className="flex-shrink-0">
                     <CartSheet />
                 </div>
             </div>
