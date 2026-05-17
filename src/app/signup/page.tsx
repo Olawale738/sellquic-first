@@ -36,11 +36,13 @@ function CategoryPicker({
   onSelect,
   onContinue,
   isLoading,
+  error,
 }: {
   selected: string;
   onSelect: (id: string) => void;
   onContinue: () => void;
   isLoading: boolean;
+  error?: string;
 }) {
   return (
     <div className="w-full max-w-md space-y-6 animate-in fade-in slide-in-from-bottom-4">
@@ -69,6 +71,12 @@ function CategoryPicker({
         ))}
       </div>
 
+      {error && (
+        <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 font-medium">
+          {error}
+        </div>
+      )}
+
       <Button
         disabled={!selected || isLoading}
         onClick={onContinue}
@@ -92,6 +100,7 @@ function SignupForm() {
   });
   const [phone, setPhone] = useState('');
   const [businessCategory, setBusinessCategory] = useState('');
+  const [categoryError, setCategoryError] = useState('');
   const [step, setStep] = useState<'signup' | 'category' | 'otp'>('signup');
   const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
   const [userId, setUserId] = useState('');
@@ -150,7 +159,7 @@ function SignupForm() {
           if (createError.code === 'auth/email-already-in-use') {
             const { user } = await signInWithEmailAndPassword(auth, formData.email, formData.password);
             uid = user.uid;
-            setUserId(user.uid);
+            setUserId(user.uid);   // ← was missing in this branch
             setHasAuthUser(true);
           } else {
             throw createError;
@@ -197,11 +206,15 @@ function SignupForm() {
   // Step 2 — category confirmed, send OTP
   const handleCategoryConfirm = async () => {
     if (!businessCategory) return;
+    setCategoryError('');
     setIsLoading(true);
     try {
+      if (!userId) throw new Error('Session lost — please refresh and try again.');
       const result = await sendOtpAction(userId, formData.email, `${formData.firstName} ${formData.lastName}`);
       if (!result.success) {
-        toast({ title: 'Could not send code', description: result.message || 'Please try again later.', variant: 'destructive' });
+        const msg = result.message || 'Could not send verification code. Please try again.';
+        setCategoryError(msg);
+        toast({ title: 'Could not send code', description: msg, variant: 'destructive' });
         return;
       }
       setStep('otp');
@@ -209,7 +222,9 @@ function SignupForm() {
       setResendCountdown(60);
       setTimeout(() => setCanResend(true), 60000);
     } catch (err: any) {
-      toast({ title: 'Error', description: err.message, variant: 'destructive' });
+      const msg = err.message || 'Something went wrong. Please try again.';
+      setCategoryError(msg);
+      toast({ title: 'Error', description: msg, variant: 'destructive' });
     } finally {
       setIsLoading(false);
     }
@@ -357,9 +372,10 @@ function SignupForm() {
         {step === 'category' && (
           <CategoryPicker
             selected={businessCategory}
-            onSelect={setBusinessCategory}
+            onSelect={(id) => { setBusinessCategory(id); setCategoryError(''); }}
             onContinue={handleCategoryConfirm}
             isLoading={isLoading}
+            error={categoryError}
           />
         )}
 
