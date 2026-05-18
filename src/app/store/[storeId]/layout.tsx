@@ -75,31 +75,26 @@ if (sellerSnap.exists && sellerData?.status === 'suspended') {
   isSuspended = true;
 }
 
-// Subscription gate — suspends:
-//   • pending_plan (after 7-day grace window)
-//   • expired trial
-//   • expired paid
-//   • no subscription
+// Subscription gate — only suspends explicitly expired subscriptions.
+// pending_plan and no_subscription are treated as active (new/pre-trial users).
 // Does NOT suspend:
 //   • active paid (endDate in future)
 //   • active trial (trialEndsAt in future)
 //   • legacy free (planId === 'free')
-//   • pending_plan within 7 days of account creation (grace window for pre-trial users)
+//   • pending_plan (new users who haven't started trial yet)
+//   • no_subscription (very old accounts with no sub record)
+// DOES suspend:
+//   • expired_trial (trial ended, user must pick a plan)
+//   • expired_paid (paid plan lapsed, user must renew)
+//   • inactive (manually deactivated)
 if (sellerSnap.exists && sellerData?.subscription !== undefined) {
-  if (!hasCommerceAccess(sellerData.subscription)) {
-    // Grace window: pending_plan accounts created < 7 days ago still get access.
-    const isPendingPlan = sellerData.subscription?.status === 'pending_plan';
-    let withinGracePeriod = false;
-    if (isPendingPlan && sellerData.createdAt) {
-      const created: Date =
-        typeof sellerData.createdAt.toDate === 'function'
-          ? sellerData.createdAt.toDate()
-          : new Date(sellerData.createdAt);
-      withinGracePeriod = Date.now() - created.getTime() < 7 * 24 * 60 * 60 * 1000;
-    }
-    if (!withinGracePeriod) {
-      isSuspended = true;
-    }
+  const subStatus = sellerData.subscription?.status;
+  if (
+    subStatus === 'expired_trial' ||
+    subStatus === 'expired_paid' ||
+    subStatus === 'inactive'
+  ) {
+    isSuspended = true;
   }
 }
 // --- END SUSPENSION LOGIC ---
