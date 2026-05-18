@@ -16,15 +16,18 @@ export interface GenerateAutoStoreResult {
 }
 
 const SYSTEM_INSTRUCTION =
-  'You are SellQuic Auto Store Builder AI. Transform vendor signup data into a complete, professional, category-specific ecommerce store configuration. Return ONLY valid JSON — no markdown, no code blocks, no explanation.';
+  'You are SellQuic Master Store Creation AI — the intelligent store creation engine inside SellQuic. ' +
+  'Your job is to automatically create powerful, elegant, dynamic, category-based online stores for vendors immediately after signup. ' +
+  'You must create premium, well-structured, professional, mobile-first, conversion-focused, and fully editable ecommerce stores based on the category selected by each vendor. ' +
+  'Return ONLY valid JSON — no markdown, no code blocks, no explanation.';
 
 function buildUserPrompt(p: GenerateAutoStoreParams): string {
   const { businessName, category, subcategory, email = '', phone = '' } = p;
   const sub = subcategory || category;
 
-  return `Build a complete store for this vendor. Every field must have real, professional, persuasive content — NEVER use Lorem ipsum. All prices must be "PLACEHOLDER". Mark all AI-generated product data clearly.
+  return `You are SellQuic Master Store Creation AI. Create a complete, professional, category-specific master store for this vendor. Every field must have real, professional, persuasive, category-appropriate content — NEVER use Lorem ipsum or placeholder text for copywriting fields. All product prices must remain "PLACEHOLDER". Mark all AI-generated product data clearly with is_ai_placeholder: true.
 
-Vendor:
+Vendor details:
 - Business Name: ${businessName}
 - Category: ${category}
 - Subcategory: ${sub}
@@ -33,9 +36,35 @@ Vendor:
 - Currency: GHS
 - Language: English
 
-Return this exact JSON structure with all fields filled:
+Category rules:
+- Fashion: elegant boutique tone, size/color variants, featured collections
+- Food: warm appetizing tone, menu sections, WhatsApp ordering
+- Beauty: clean luxury tone, product benefits, skin/hair categories
+- Electronics: tech specs tone, warranty placeholders, comparison descriptions
+- Furniture: calm spacious tone, room-based categories, material/size
+- Groceries: fresh practical tone, fast-shopping layout, reorder friendly
+- Services: professional tone, service packages, booking/inquiry CTA
+- General: clean flexible marketplace style, mixed categories
+- vendor_writeups must be warm, professional, category-appropriate — no fake claims
+- support.faq: exactly 5 relevant Q&A pairs for the category
+- products: exactly 4 realistic AI placeholder products with customer_benefit filled
+- vendor_dashboard.onboarding_checklist: exactly 6 specific actionable steps
+
+Fill in every "" value with real, professional, category-specific content. Return this exact JSON structure:
 
 {
+  "sellquic_master_store_creation": {
+    "agent_name": "SellQuic Master Store Creation AI",
+    "mode": "generate",
+    "selected_category": "${category}",
+    "selected_subcategory": "${sub}",
+    "theme_selected": "",
+    "theme_reason": "",
+    "data_sources_used": ["vendor_signup_data"],
+    "placeholders_created": true,
+    "requires_vendor_confirmation": true,
+    "requires_admin_review": false
+  },
   "vendor_profile": {
     "business_name": "${businessName}",
     "business_category": "${category}",
@@ -46,42 +75,87 @@ Return this exact JSON structure with all fields filled:
     "missing_fields": []
   },
   "business_identity": {
-    "tagline": "",
+    "store_tagline": "",
     "brand_voice": "",
     "short_description": "",
     "long_description": "",
-    "trust_message": "",
     "customer_promise": "",
-    "visual_direction": ""
+    "trust_message": "",
+    "about_section": "",
+    "recommended_logo_style": "",
+    "recommended_color_mood": "",
+    "editable": true
+  },
+  "vendor_writeups": {
+    "homepage_intro": "",
+    "about_us": "",
+    "our_story": "",
+    "brand_mission": "",
+    "brand_values": [],
+    "why_shop_with_us": [],
+    "our_promise": "",
+    "customer_welcome_message": "",
+    "trust_message": "",
+    "quality_message": "",
+    "delivery_message": "",
+    "payment_assurance_message": "",
+    "customer_support_message": "",
+    "thank_you_message": "",
+    "short_store_bio": "",
+    "footer_description": "",
+    "editable": true,
+    "placeholder_note": "These write-ups are AI generated and should be reviewed by the vendor before publishing."
   },
   "theme": {
     "theme_name": "",
-    "theme_category": "",
-    "color_palette": { "primary": "", "secondary": "", "accent": "", "background": "", "text": "" },
-    "typography": { "heading_style": "", "body_style": "" },
+    "best_for": "",
+    "color_palette": { "primary": "", "secondary": "", "accent": "", "background": "", "surface": "", "text": "" },
+    "typography": { "heading_style": "", "body_style": "", "accent_style": "" },
     "button_style": "",
     "card_style": "",
-    "layout_style": ""
+    "layout_style": "",
+    "hero_style": "",
+    "image_direction": "",
+    "customer_experience_direction": "",
+    "editable": true
   },
   "storefront": {
     "store_name": "${businessName}",
+    "layout_type": "",
     "navigation": ["Shop", "Track Order", "Contact"],
+    "header": { "logo_area": "", "menu_items": [], "search_enabled": true, "cart_or_inquiry_button": "" },
     "hero": {
       "headline": "",
       "subheadline": "",
       "primary_cta": "",
       "secondary_cta": "Track My Order",
-      "visual_direction": ""
+      "banner_image_prompt": "",
+      "dynamic_presentation": ""
     },
     "sections": [
-      { "section_name": "Featured Categories", "section_type": "categories", "headline": "", "description": "", "cta": "Browse All", "editable": true },
-      { "section_name": "New Arrivals", "section_type": "products", "headline": "", "description": "", "cta": "Shop Now", "editable": true },
-      { "section_name": "About Us", "section_type": "about", "headline": "", "description": "", "cta": "", "editable": true },
-      { "section_name": "Order Tracking", "section_type": "tracking", "headline": "", "description": "", "cta": "Track Order", "editable": true },
-      { "section_name": "Help & Support", "section_type": "help", "headline": "", "description": "", "cta": "Contact Us", "editable": true },
-      { "section_name": "FAQ", "section_type": "faq", "headline": "", "description": "", "cta": "", "editable": true }
+      { "section_name": "Featured Categories", "section_type": "categories", "headline": "", "description": "", "cta": "Browse All", "display_order": 1, "dynamic_behavior": "", "editable": true },
+      { "section_name": "New Arrivals", "section_type": "products", "headline": "", "description": "", "cta": "Shop Now", "display_order": 2, "dynamic_behavior": "", "editable": true },
+      { "section_name": "About Us", "section_type": "about", "headline": "", "description": "", "cta": "", "display_order": 3, "dynamic_behavior": "", "editable": true },
+      { "section_name": "Order Tracking", "section_type": "tracking", "headline": "", "description": "", "cta": "Track Order", "display_order": 4, "dynamic_behavior": "", "editable": true },
+      { "section_name": "Help & Support", "section_type": "help", "headline": "", "description": "", "cta": "Contact Us", "display_order": 5, "dynamic_behavior": "", "editable": true },
+      { "section_name": "FAQ", "section_type": "faq", "headline": "", "description": "", "cta": "", "display_order": 6, "dynamic_behavior": "", "editable": true }
     ],
-    "footer": { "description": "", "links": ["Shop", "Track Order", "Contact", "About Us"], "contact_summary": "", "powered_by": "SellQuic" }
+    "trust_section": { "headline": "", "trust_points": [], "note": "Trust points are placeholders unless confirmed by vendor" },
+    "footer": { "description": "", "links": ["Shop", "Track Order", "Contact", "About Us"], "contact_summary": "", "social_links_placeholder": [], "powered_by": "SellQuic" },
+    "editable": true
+  },
+  "dynamic_presentation": {
+    "hero_banner_style": "",
+    "category_card_style": "",
+    "product_card_style": "",
+    "featured_carousel_style": "",
+    "promo_banner_style": "",
+    "icon_style": "",
+    "button_animation_suggestion": "",
+    "mobile_layout_behavior": "",
+    "empty_state_design": "",
+    "loading_state_message": "",
+    "trust_badges_placeholder": []
   },
   "categories": [
     { "name": "", "description": "", "display_order": 1, "image_prompt": "", "editable": true },
@@ -91,19 +165,27 @@ Return this exact JSON structure with all fields filled:
     { "name": "", "description": "", "display_order": 5, "image_prompt": "", "editable": true }
   ],
   "products": [
-    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "image_prompt": "", "seo_keywords": [], "is_ai_placeholder": true, "is_vendor_confirmed": false },
-    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "image_prompt": "", "seo_keywords": [], "is_ai_placeholder": true, "is_vendor_confirmed": false },
-    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "image_prompt": "", "seo_keywords": [], "is_ai_placeholder": true, "is_vendor_confirmed": false },
-    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "image_prompt": "", "seo_keywords": [], "is_ai_placeholder": true, "is_vendor_confirmed": false }
+    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "sku": "AI-001", "stock_status": "placeholder", "image_prompt": "", "customer_benefit": "", "seo_keywords": [], "missing_fields": ["price", "image", "stock"], "is_ai_placeholder": true, "is_vendor_confirmed": false, "editable": true },
+    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "sku": "AI-002", "stock_status": "placeholder", "image_prompt": "", "customer_benefit": "", "seo_keywords": [], "missing_fields": ["price", "image", "stock"], "is_ai_placeholder": true, "is_vendor_confirmed": false, "editable": true },
+    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "sku": "AI-003", "stock_status": "placeholder", "image_prompt": "", "customer_benefit": "", "seo_keywords": [], "missing_fields": ["price", "image", "stock"], "is_ai_placeholder": true, "is_vendor_confirmed": false, "editable": true },
+    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "sku": "AI-004", "stock_status": "placeholder", "image_prompt": "", "customer_benefit": "", "seo_keywords": [], "missing_fields": ["price", "image", "stock"], "is_ai_placeholder": true, "is_vendor_confirmed": false, "editable": true }
   ],
   "checkout": {
     "recommended_flow": "",
     "cart_enabled": true,
     "whatsapp_order_enabled": true,
+    "booking_enabled": false,
+    "preorder_enabled": false,
     "checkout_cta": "",
     "empty_cart_message": "",
     "order_confirmation_message": "",
-    "payment_instruction_placeholder": ""
+    "missing_checkout_fields": []
+  },
+  "payments": {
+    "payment_status": "draft",
+    "methods": [],
+    "payment_instruction_placeholder": "",
+    "missing_payment_fields": ["bank_account", "payment_gateway", "mobile_money"]
   },
   "delivery": {
     "delivery_status": "draft",
@@ -113,11 +195,27 @@ Return this exact JSON structure with all fields filled:
     "delivery_faq": [],
     "missing_delivery_fields": ["delivery_zones", "delivery_fee", "dispatch_timeline"]
   },
+  "customer_communication": {
+    "order_confirmation": "",
+    "payment_instruction": "",
+    "delivery_update": "",
+    "product_inquiry_reply": "",
+    "support_reply": "",
+    "whatsapp_templates": [],
+    "email_templates": []
+  },
+  "support": {
+    "faq": [],
+    "support_policy": "",
+    "escalation_note": ""
+  },
   "seo": {
-    "page_title": "",
-    "meta_description": "",
+    "homepage_title": "",
+    "homepage_meta_description": "",
     "category_keywords": [],
     "product_keywords": [],
+    "image_alt_text_suggestions": [],
+    "local_seo_text": "",
     "social_share_title": "",
     "social_share_description": ""
   },
@@ -127,15 +225,22 @@ Return this exact JSON structure with all fields filled:
     "instagram_caption": "",
     "facebook_caption": "",
     "promo_banner_text": "",
+    "first_week_sales_ideas": [],
     "customer_review_request": "",
-    "first_week_growth_suggestions": []
+    "featured_product_message": ""
   },
   "vendor_dashboard": {
     "store_completion_score": 65,
     "onboarding_checklist": [],
     "missing_setup_items": [],
-    "recommended_next_actions": []
+    "recommended_next_actions": [],
+    "product_improvement_alerts": [],
+    "payment_setup_alerts": [],
+    "delivery_setup_alerts": [],
+    "seo_alerts": [],
+    "dashboard_notifications": []
   },
+  "policy_safety": { "status": "passed", "flags": [], "safe_edit_suggestions": [] },
   "publish_readiness": {
     "status": "needs_vendor_input",
     "checks": {
@@ -154,23 +259,12 @@ Return this exact JSON structure with all fields filled:
       "has_no_critical_policy_issue": true
     },
     "required_vendor_inputs": ["payment_method", "delivery_zones", "product_images", "real_pricing"]
-  }
+  },
+  "admin_review_summary": { "review_required": false, "reason": "", "risk_flags": [], "recommended_admin_action": "" },
+  "final_response": { "summary": "", "actions_completed": [], "actions_requiring_vendor_confirmation": [], "next_best_action": "" }
 }
 
-Category rules:
-- theme_category must be one of: fashion, food, beauty, electronics, furniture, groceries, services, general
-- Fashion: elegant boutique tone, size/color variants, featured collections
-- Food: warm appetizing tone, menu sections, operating hours hints, WhatsApp ordering
-- Beauty: clean luxury tone, product benefits, usage notes, skin/hair categories
-- Electronics: tech specs tone, warranty placeholders, comparison-style descriptions
-- Furniture: calm spacious tone, room-based categories, material/size placeholders
-- Groceries: fresh practical tone, fast-shopping layout, reorder friendly
-- Services: professional tone, service packages, booking/inquiry CTA
-- categories: exactly 5 entries specific to the vendor's category
-- products: exactly 4 realistic AI placeholder products for the category
-- onboarding_checklist: exactly 6 specific actionable steps for this vendor
-- marketing content: ready to copy-paste immediately
-- Return ONLY the JSON object`;
+Return ONLY the JSON object above with all "" values filled in with real, professional, category-specific content.`;
 }
 
 function findSection(sections: AutoStoreSection[], type: AutoStoreSection['section_type']): AutoStoreSection | undefined {
@@ -184,7 +278,7 @@ function extractStorefrontConfig(cfg: AutoStoreConfig): Partial<StorefrontConfig
 
   return {
     theme_name: cfg.theme?.theme_name ?? '',
-    theme_category: (cfg.theme?.theme_category as StorefrontConfig['theme_category']) ?? 'general',
+    theme_category: (cfg.sellquic_master_store_creation?.selected_category?.toLowerCase() as StorefrontConfig['theme_category']) ?? 'general',
     color_palette: cfg.theme?.color_palette as StorefrontConfig['color_palette'],
     typography: {
       heading_font_style: cfg.theme?.typography?.heading_style ?? '',
@@ -196,7 +290,7 @@ function extractStorefrontConfig(cfg: AutoStoreConfig): Partial<StorefrontConfig
       subheadline: cfg.storefront?.hero?.subheadline ?? '',
       primary_cta: cfg.storefront?.hero?.primary_cta ?? '',
       secondary_cta: cfg.storefront?.hero?.secondary_cta ?? 'Track My Order',
-      visual_direction: cfg.storefront?.hero?.visual_direction ?? '',
+      visual_direction: cfg.storefront?.hero?.dynamic_presentation ?? '',
     },
     categories: cfg.categories?.map((c) => ({
       name: c.name,
@@ -247,8 +341,8 @@ function extractStorefrontConfig(cfg: AutoStoreConfig): Partial<StorefrontConfig
       powered_by: 'SellQuic',
     },
     seo: {
-      page_title: cfg.seo?.page_title ?? '',
-      meta_description: cfg.seo?.meta_description ?? '',
+      page_title: cfg.seo?.homepage_title ?? '',
+      meta_description: cfg.seo?.homepage_meta_description ?? '',
       keywords: [...(cfg.seo?.category_keywords ?? []), ...(cfg.seo?.product_keywords ?? [])],
     },
     editable_fields: [],
