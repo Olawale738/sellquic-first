@@ -3,8 +3,7 @@ import { StoreHero } from '@/components/store-hero';
 import { StoreProductGrid } from '@/components/store-product-grid';
 import { FaqSection } from '@/components/store/FaqSection';
 import { CategorySection } from '@/components/store/CategorySection';
-import { OrderTrackingSection } from '@/components/store/OrderTrackingSection';
-import { HelpSection } from '@/components/store/HelpSection';
+import { StoreContactBand } from '@/components/store/StoreContactBand';
 import { AboutSection } from '@/components/store/AboutSection';
 import { StoreFeaturesSection } from '@/components/store/StoreFeaturesSection';
 import { useStore } from '@/context/store-context';
@@ -21,8 +20,8 @@ function CategoryStoreLayout() {
         <StoreProductGrid />
         <StoreFeaturesSection />
         <AboutSection />
-        <HelpSection />
         <FaqSection />
+        <StoreContactBand />
       </div>
     );
   }
@@ -35,8 +34,7 @@ function CategoryStoreLayout() {
         <StoreProductGrid />
         <StoreFeaturesSection />
         <AboutSection />
-        <OrderTrackingSection />
-        <HelpSection />
+        <StoreContactBand />
       </div>
     );
   }
@@ -49,8 +47,8 @@ function CategoryStoreLayout() {
         <StoreProductGrid />
         <StoreFeaturesSection />
         <AboutSection />
-        <HelpSection />
         <FaqSection />
+        <StoreContactBand />
       </div>
     );
   }
@@ -62,8 +60,7 @@ function CategoryStoreLayout() {
         <CategorySection />
         <StoreProductGrid />
         <StoreFeaturesSection />
-        <OrderTrackingSection />
-        <HelpSection />
+        <StoreContactBand />
       </div>
     );
   }
@@ -76,7 +73,7 @@ function CategoryStoreLayout() {
         <StoreProductGrid />
         <StoreFeaturesSection />
         <AboutSection />
-        <HelpSection />
+        <StoreContactBand />
       </div>
     );
   }
@@ -88,8 +85,7 @@ function CategoryStoreLayout() {
         <CategorySection />
         <StoreProductGrid />
         <StoreFeaturesSection />
-        <OrderTrackingSection />
-        <HelpSection />
+        <StoreContactBand />
       </div>
     );
   }
@@ -102,8 +98,8 @@ function CategoryStoreLayout() {
         <StoreProductGrid />
         <StoreFeaturesSection />
         <AboutSection />
-        <HelpSection />
         <FaqSection />
+        <StoreContactBand />
       </div>
     );
   }
@@ -116,9 +112,8 @@ function CategoryStoreLayout() {
       <StoreProductGrid />
       <StoreFeaturesSection />
       <AboutSection />
-      <OrderTrackingSection />
-      <HelpSection />
       <FaqSection />
+      <StoreContactBand />
     </div>
   );
 }
