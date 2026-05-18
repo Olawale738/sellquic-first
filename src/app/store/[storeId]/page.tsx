@@ -9,7 +9,7 @@ import { AboutSection } from '@/components/store/AboutSection';
 
 export default function StorePage() {
   return (
-    <div>
+    <div className="flex flex-col">
       <StoreHero />
       <CategorySection />
       <StoreProductGrid />

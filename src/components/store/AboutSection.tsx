@@ -3,33 +3,62 @@
 import { useStore } from '@/context/store-context';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { CheckCircle2 } from 'lucide-react';
 
-const ABOUT_TAGLINES: Record<string, string> = {
-  fashion:     'We curate the finest fashion pieces to help you express your unique style. From everyday essentials to statement pieces, every item is carefully selected for quality, style, and value.',
-  clothing:    'We believe great style is for everyone. Our collection spans casual wear to formal attire, all curated with quality and affordability in mind.',
-  food:        "We're passionate about bringing you delicious, high-quality food made with love and the freshest ingredients. Every meal is prepared with care to satisfy your cravings and delight your taste buds.",
-  restaurant:  'Our kitchen is our passion. We source the finest ingredients and prepare every dish with dedication to flavor, freshness, and authentic taste.',
-  beauty:      'We believe everyone deserves to feel beautiful. Our hand-picked beauty products are tested, authentic, and carefully sourced to support your unique beauty routine.',
-  skincare:    'Your skin deserves the best. We stock only dermatologist-recommended, ingredient-conscious skincare products that deliver real results.',
-  electronics: 'We bring you the latest and most reliable technology at competitive prices. Every product we sell is genuine, warranted, and backed by our expert support team.',
-  technology:  'Tech should be accessible to everyone. We offer a wide range of authentic gadgets and devices to keep you connected, productive, and entertained.',
-  furniture:   'Your home is your sanctuary. We source beautifully crafted furniture that blends function with style — because you deserve a space that feels like you.',
-  home:        'Transform your living space with our thoughtfully curated home collection. Quality pieces that make every corner of your home shine.',
-  groceries:   "From farm to your table — we're committed to supplying you with the freshest, highest-quality groceries at great prices.",
-  grocery:     'We make grocery shopping effortless. Fresh produce, pantry staples, and household essentials delivered right to your door.',
-  services:    'Our experienced team is dedicated to delivering professional services that exceed your expectations. Whatever you need, we make it happen.',
-  health:      'Your wellness is our priority. We offer a curated selection of health and wellness products to support a balanced, vibrant lifestyle.',
-  sports:      'Fuel your passion for sport and fitness. We stock premium sporting gear, apparel, and accessories to help you perform at your best.',
+const ABOUT_COPY: Record<string, { tagline: string; body: string; bullets: string[] }> = {
+  fashion: {
+    tagline: 'Style is a language — we help you speak it fluently.',
+    body: 'We curate the finest fashion pieces to help you express your unique style. From everyday essentials to statement pieces, every item is carefully selected for quality, style, and value.',
+    bullets: ['Handpicked styles for every occasion', 'Authentic products only', 'Fast nationwide delivery'],
+  },
+  food: {
+    tagline: 'Made with love. Delivered with care.',
+    body: "We're passionate about bringing you delicious, high-quality food made with the freshest ingredients. Every meal is prepared with care to satisfy your cravings and delight your taste buds.",
+    bullets: ['Fresh ingredients every day', 'Hygienic preparation standards', 'Same-day delivery available'],
+  },
+  beauty: {
+    tagline: 'Because you deserve to glow every single day.',
+    body: 'We believe everyone deserves to feel beautiful. Our hand-picked beauty products are tested, authentic, and carefully sourced to support your unique beauty routine.',
+    bullets: ['100% authentic products', 'Dermatologist-approved picks', 'Secure & discreet packaging'],
+  },
+  electronics: {
+    tagline: 'Real tech. Real warranty. Real support.',
+    body: 'We bring you the latest and most reliable technology at competitive prices. Every product we sell is genuine, warranted, and backed by our expert support team.',
+    bullets: ['Official warranty on all items', 'Genuine products guaranteed', 'Tech support available post-purchase'],
+  },
+  furniture: {
+    tagline: 'Your home, your sanctuary — we make it beautiful.',
+    body: 'We source beautifully crafted furniture that blends function with style. Because you deserve a space that feels like you.',
+    bullets: ['Premium materials & craftsmanship', 'Assembly support available', '30-day return policy'],
+  },
+  groceries: {
+    tagline: 'From farm to your table, every day.',
+    body: "We're committed to supplying you with the freshest, highest-quality groceries at great prices. From farm-fresh produce to pantry staples — we have it all.",
+    bullets: ['Farm-fresh produce daily', 'Best prices guaranteed', 'Same-day delivery options'],
+  },
+  services: {
+    tagline: 'Professional. Reliable. Built around you.',
+    body: 'Our experienced team is dedicated to delivering professional services that exceed your expectations. Whatever you need, we make it happen on time.',
+    bullets: ['Experienced professionals', 'Satisfaction guaranteed', 'Flexible scheduling'],
+  },
 };
 
-function getAboutDescription(name?: string, category?: string, tagline?: string): string {
-  if (tagline) return tagline;
-  const storeName = name || 'our store';
-  const cat = category?.toLowerCase() || '';
-  for (const [key, text] of Object.entries(ABOUT_TAGLINES)) {
-    if (cat.includes(key)) return text;
+function getAboutCopy(name: string, category?: string, tagline?: string, aboutUs?: string) {
+  const cat = (category || '').toLowerCase();
+  for (const [key, copy] of Object.entries(ABOUT_COPY)) {
+    if (cat.includes(key)) {
+      return {
+        tagline: tagline || copy.tagline,
+        body: aboutUs || copy.body,
+        bullets: copy.bullets,
+      };
+    }
   }
-  return `Welcome to ${storeName}! We're dedicated to providing you with the best products and exceptional service. Every item in our store is carefully curated to meet the highest standards of quality and value.`;
+  return {
+    tagline: tagline || `Welcome to ${name}`,
+    body: aboutUs || `We're dedicated to providing you with the best products and exceptional service. Every item is carefully curated to meet the highest standards of quality and value.`,
+    bullets: ['Quality products guaranteed', 'Fast & secure delivery', 'Excellent customer support'],
+  };
 }
 
 export function AboutSection() {
@@ -38,45 +67,66 @@ export function AboutSection() {
   if (!store) return null;
 
   const aboutConfig = store?.storefrontConfig?.about_section;
-  const legacyAbout = store?.aboutUs;
-  const isAboutActive = store?.isAboutUsActive;
+  const autoAbout = store?.autoStoreConfig?.storefront?.sections?.find(
+    (s: { section_type: string }) => s.section_type === 'about'
+  );
 
   const headline =
     aboutConfig?.headline ||
-    (isAboutActive ? `About ${store.name}` : null) ||
+    autoAbout?.headline ||
     `About ${store.name}`;
 
-  const description =
-    aboutConfig?.description ||
-    (isAboutActive ? legacyAbout : null) ||
-    getAboutDescription(store.name, store.category, store.tagline);
+  const isAboutActive = store?.isAboutUsActive;
+  const legacyAbout = store?.aboutUs;
+
+  const { tagline, body, bullets } = getAboutCopy(
+    store.name,
+    store.category,
+    store.tagline,
+    isAboutActive ? legacyAbout : undefined,
+  );
+
+  const description = aboutConfig?.description || autoAbout?.description || body;
 
   return (
-    <section className="py-12 md:py-16 bg-background border-t">
+    <section className="py-14 md:py-20 bg-secondary/30 border-t">
       <div className="container mx-auto px-4 md:px-6">
-        <div
-          className={cn(
-            'grid gap-10 items-center',
-            store.logoUrl ? 'md:grid-cols-2' : 'max-w-2xl mx-auto text-center'
-          )}
-        >
+        <div className={cn(
+          'grid gap-12 items-center',
+          store.logoUrl ? 'md:grid-cols-2' : 'max-w-3xl mx-auto'
+        )}>
+
+          {/* Text side */}
           <div>
-            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-2">Our Story</p>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-4">{headline}</h2>
+            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-3">Our Story</p>
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3 text-foreground">
+              {headline}
+            </h2>
+            <p className="text-muted-foreground italic mb-5 text-base">{tagline}</p>
             <div
-              className="text-muted-foreground leading-relaxed prose max-w-none"
+              className="text-muted-foreground leading-relaxed mb-6 text-sm md:text-base"
               dangerouslySetInnerHTML={{ __html: description.replace(/\n/g, '<br />') }}
             />
+            {/* Bullets */}
+            <ul className="space-y-2.5">
+              {bullets.map((b, i) => (
+                <li key={i} className="flex items-start gap-2.5 text-sm text-foreground">
+                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
+          {/* Logo / visual side */}
           {store.logoUrl && (
             <div className="flex justify-center md:justify-end">
-              <div className="relative h-48 w-48 md:h-64 md:w-64 rounded-3xl overflow-hidden bg-secondary border shadow-sm">
+              <div className="relative h-56 w-56 md:h-72 md:w-72 rounded-3xl overflow-hidden bg-background border shadow-lg">
                 <Image
                   src={store.logoUrl}
                   alt={store.name}
                   fill
-                  className="object-contain p-6"
+                  className="object-contain p-8"
                 />
               </div>
             </div>

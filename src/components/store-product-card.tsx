@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useStore } from '@/context/store-context';
@@ -6,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from './ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Eye } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { cn } from '@/lib/utils';
 import { Product } from '@/types/product';
@@ -15,156 +14,168 @@ import { getStoreBasePath } from '@/lib/url';
 import { useRouter } from 'next/navigation';
 
 export const ProductCard = ({ product }: { product: Product }) => {
-    const { store, isDemo } = useStore();
-    const router = useRouter();
-    const { toast } = useToast();
-    const { addItem } = useCart();
-    
-    if (!product || !store) return null;
+  const { store, isDemo } = useStore();
+  const router = useRouter();
+  const { toast } = useToast();
+  const { addItem } = useCart();
 
-    // --- MARKETING LOGIC ---
-    const marketing = store.marketing || {};
-    const globalDiscount = marketing.isSiteWideSaleActive ? (marketing.siteWideDiscount || 0) : 0;
-    
-    const calculatePrice = (basePrice: number) => {
-        if (globalDiscount > 0) {
-            return basePrice * (1 - globalDiscount / 100);
-        }
-        return basePrice;
-    };
-    
-    const displayPrice = calculatePrice(product.price);
-    const originalPrice = product.regularPrice || product.price;
-    const isDiscounted = displayPrice < originalPrice;
-    
-    const discountPercentage = Math.round(((originalPrice - displayPrice) / originalPrice) * 100);
+  if (!product || !store) return null;
 
-    // --- END MARKETING LOGIC ---
+  // Marketing / discount logic
+  const marketing = store.marketing || {};
+  const globalDiscount = marketing.isSiteWideSaleActive ? (marketing.siteWideDiscount || 0) : 0;
 
-    const hasVariants = product.hasVariants && product.variants && product.variants.length > 0;
+  const calculatePrice = (basePrice: number) =>
+    globalDiscount > 0 ? basePrice * (1 - globalDiscount / 100) : basePrice;
 
-    const getTotalStock = (p: Product): number => {
-      if (p.isOutOfStock) return 0;
-      if (!p.manageStock) return 999;
-      if (hasVariants && p.variants) {
-          return p.variants.reduce((total, v) => total + (v.stock || 0), 0);
+  const displayPrice = calculatePrice(product.price);
+  const originalPrice = product.regularPrice || product.price;
+  const isDiscounted = displayPrice < originalPrice;
+  const discountPercentage = Math.round(((originalPrice - displayPrice) / originalPrice) * 100);
+
+  const hasVariants = product.hasVariants && product.variants && product.variants.length > 0;
+
+  const getTotalStock = (p: Product): number => {
+    if (p.isOutOfStock) return 0;
+    if (!p.manageStock) return 999;
+    if (hasVariants && p.variants) return p.variants.reduce((total, v) => total + (v.stock || 0), 0);
+    return p.stock || 0;
+  };
+
+  const isOutOfStock = getTotalStock(product) === 0;
+
+  const productUrl = isDemo
+    ? `/demo/${store.slug}/products/${product.id}`
+    : `${getStoreBasePath(store.subdomain)}/products/${product.slug || product.id}`;
+
+  let imageSrc = '/placeholder.svg';
+  if (product.images?.length) {
+    imageSrc = product.images[0];
+  } else if (product.variants?.length) {
+    const v = product.variants.find((v) => v.image?.length);
+    if (v?.image) imageSrc = v.image;
+  }
+
+  const priceDisplay = () => {
+    if (hasVariants && product.variants) {
+      const validPrices = product.variants.map((v) => calculatePrice(v.price)).filter((p) => p > 0);
+      if (validPrices.length > 0) {
+        const min = Math.min(...validPrices);
+        return (
+          <span className="font-bold text-primary text-sm">
+            <span className="text-xs text-muted-foreground font-normal">From </span>
+            GH₵{min.toFixed(2)}
+          </span>
+        );
       }
-      return p.stock || 0;
-    };
-  
-    const isOutOfStock = getTotalStock(product) === 0;
-
-    const getDisplayPrice = () => {
-        if (hasVariants && product.variants) {
-            const validPrices = product.variants.map(v => calculatePrice(v.price)).filter(p => p > 0);
-            if (validPrices.length > 0) {
-            const minPrice = Math.min(...validPrices);
-            return (
-                <span className="font-bold text-primary">
-                    <span className="text-xs text-muted-foreground font-normal">From </span>
-                    GH₵{minPrice.toFixed(2)}
-                </span>
-            );
-            }
-        }
-
-        // Standard Product Display
-        if (isDiscounted && marketing.showOriginalPrice !== false) {
-             return (
-                <div className="flex flex-col items-start leading-none gap-1">
-                    <span className="text-sm text-muted-foreground line-through">
-                        GH₵{originalPrice.toFixed(2)}
-                    </span>
-                    <span className="font-bold text-lg text-red-600">
-                        GH₵{displayPrice.toFixed(2)}
-                    </span>
-                </div>
-            );
-        }
-
-        return <span className="font-bold text-lg text-primary">GH₵{displayPrice.toFixed(2)}</span>;
-    };
-  
-    const handleQuickAdd = (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      // Add the DISCOUNTED price to cart
-      const itemToAdd = { ...product, price: displayPrice };
-      addItem(itemToAdd, 1);
-      toast({ title: `${product.name} added to cart!` });
-    };
-
-    const handleViewProduct = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        router.push(productUrl);
     }
-    
-    const productUrl = isDemo ? `/demo/${store.slug}/products/${product.id}` : `${getStoreBasePath(store.subdomain)}/products/${product.slug || product.id}`;
-    
-    // Smart Image Fallback
-    let imageSrc = '/placeholder.svg';
-    if (product.images && product.images.length > 0) {
-        imageSrc = product.images[0];
-    } else if (product.variants && product.variants.length > 0) {
-        const variantWithImage = product.variants.find(v => v.image && v.image.length > 0);
-        if (variantWithImage && variantWithImage.image) imageSrc = variantWithImage.image;
-    }
-  
-    return (
-      <div className="border border-gray-200/60 rounded-lg p-2 transition-shadow hover:shadow-md bg-white h-full flex flex-col">
-        <Link href={productUrl} className="block group flex-grow">
-        <div className="relative overflow-hidden rounded-lg aspect-[4/5] bg-gray-50">
-                <Image
-                    src={imageSrc}
-                    alt={product.name}
-                    fill
-                    unoptimized={true}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className={cn(
-                        "object-cover object-top group-hover:scale-105 transition-transform duration-300",
-                        isOutOfStock && "grayscale"
-                    )}
-                />
-                {isOutOfStock && (
-                    <Badge variant="destructive" className="absolute top-2 left-2 z-10">
-                    Out of Stock
-                    </Badge>
-                )}
-                 {/* SALE BADGE */}
-                {!isOutOfStock && isDiscounted && marketing.showDiscountBadges !== false && (
-                     <Badge className="absolute top-2 right-2 z-10 bg-red-600 hover:bg-red-600 shadow-sm">
-                        -{discountPercentage}%
-                    </Badge>
-                )}
-            </div>
-            
-            <div className="mt-3 px-1 flex-grow flex flex-col justify-between">
-                <h3 className="font-semibold text-base leading-tight truncate text-gray-900" title={product.name}>
-                    {product.name}
-                </h3>
-                <div className="flex justify-between items-end mt-2">
-                    <div className="flex items-baseline">
-                        {getDisplayPrice()}
-                    </div>
-                </div>
-            </div>
-        </Link>
-        <div className="px-1 pt-2">
-             {!isOutOfStock && (
-                <>
-                {hasVariants ? (
-                    <Button size="sm" className="w-full font-bold bg-black text-white hover:bg-gray-800" onClick={handleViewProduct}>
-                        View Options
-                    </Button>
-                ) : (
-                    <Button size="sm" className="w-full font-bold bg-black text-white hover:bg-gray-800" onClick={handleQuickAdd}>
-                        <Plus className="h-4 w-4 mr-1" /> Add to Cart
-                    </Button>
-                )}
-                </>
-            )}
+
+    if (isDiscounted && marketing.showOriginalPrice !== false) {
+      return (
+        <div className="flex flex-col gap-0.5">
+          <span className="text-xs text-muted-foreground line-through">GH₵{originalPrice.toFixed(2)}</span>
+          <span className="font-bold text-base text-red-500">GH₵{displayPrice.toFixed(2)}</span>
         </div>
+      );
+    }
+
+    return <span className="font-bold text-base text-primary">GH₵{displayPrice.toFixed(2)}</span>;
+  };
+
+  const handleQuickAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({ ...product, price: displayPrice }, 1);
+    toast({ title: `${product.name} added to cart!` });
+  };
+
+  const handleView = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(productUrl);
+  };
+
+  return (
+    <div className="group rounded-2xl border border-border/50 bg-card overflow-hidden flex flex-col transition-shadow hover:shadow-lg">
+      {/* Image */}
+      <Link href={productUrl} className="block relative overflow-hidden aspect-[4/5] bg-secondary/40">
+        <Image
+          src={imageSrc}
+          alt={product.name}
+          fill
+          unoptimized
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          className={cn(
+            'object-cover object-top transition-transform duration-500 group-hover:scale-105',
+            isOutOfStock && 'grayscale opacity-70'
+          )}
+        />
+
+        {/* Badges */}
+        {isOutOfStock && (
+          <Badge variant="secondary" className="absolute top-2.5 left-2.5 text-xs font-semibold">
+            Out of Stock
+          </Badge>
+        )}
+        {!isOutOfStock && isDiscounted && marketing.showDiscountBadges !== false && (
+          <Badge className="absolute top-2.5 right-2.5 bg-red-500 hover:bg-red-500 text-white text-xs font-bold shadow">
+            -{discountPercentage}%
+          </Badge>
+        )}
+
+        {/* Quick action overlay */}
+        {!isOutOfStock && (
+          <div className="absolute inset-x-0 bottom-0 p-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            {hasVariants ? (
+              <Button
+                size="sm"
+                className="w-full gap-1.5 text-xs font-semibold shadow-md"
+                onClick={handleView}
+              >
+                <Eye className="h-3.5 w-3.5" />
+                View Options
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                className="w-full gap-1.5 text-xs font-semibold shadow-md"
+                onClick={handleQuickAdd}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add to Cart
+              </Button>
+            )}
+          </div>
+        )}
+      </Link>
+
+      {/* Info */}
+      <div className="p-3 flex flex-col gap-2 flex-1">
+        <Link href={productUrl}>
+          <h3
+            className="text-sm font-semibold text-foreground leading-snug line-clamp-2 hover:text-primary transition-colors"
+            title={product.name}
+          >
+            {product.name}
+          </h3>
+        </Link>
+        <div className="mt-auto">{priceDisplay()}</div>
       </div>
-    );
+
+      {/* Mobile CTA (no hover on touch) */}
+      {!isOutOfStock && (
+        <div className="px-3 pb-3 sm:hidden">
+          {hasVariants ? (
+            <Button size="sm" variant="outline" className="w-full text-xs" onClick={handleView}>
+              View Options
+            </Button>
+          ) : (
+            <Button size="sm" className="w-full text-xs gap-1" onClick={handleQuickAdd}>
+              <Plus className="h-3.5 w-3.5" /> Add to Cart
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
