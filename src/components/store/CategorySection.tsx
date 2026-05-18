@@ -2,9 +2,72 @@
 
 import { useStore } from '@/context/store-context';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { getStoreBasePath } from '@/lib/url';
 import { cn, slugify } from '@/lib/utils';
+
+const CATEGORY_PHOTO: Record<string, string> = {
+  // Fashion / Clothing
+  dresses: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=400&h=300&fit=crop&auto=format&q=80',
+  tops: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=300&fit=crop&auto=format&q=80',
+  'tops & blouses': 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&h=300&fit=crop&auto=format&q=80',
+  shoes: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop&auto=format&q=80',
+  bags: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&h=300&fit=crop&auto=format&q=80',
+  accessories: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop&auto=format&q=80',
+  jeans: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=300&fit=crop&auto=format&q=80',
+  jackets: 'https://images.unsplash.com/photo-1551698617-ebb0b3e6b2e0?w=400&h=300&fit=crop&auto=format&q=80',
+  // Food
+  meals: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop&auto=format&q=80',
+  snacks: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop&auto=format&q=80',
+  drinks: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop&auto=format&q=80',
+  catering: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=300&fit=crop&auto=format&q=80',
+  'main course': 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop&auto=format&q=80',
+  desserts: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&h=300&fit=crop&auto=format&q=80',
+  breakfast: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=400&h=300&fit=crop&auto=format&q=80',
+  pizza: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=300&fit=crop&auto=format&q=80',
+  sides: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop&auto=format&q=80',
+  // Beauty
+  skincare: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&h=300&fit=crop&auto=format&q=80',
+  makeup: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&h=300&fit=crop&auto=format&q=80',
+  haircare: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=300&fit=crop&auto=format&q=80',
+  fragrance: 'https://images.unsplash.com/photo-1541643600914-78b084683702?w=400&h=300&fit=crop&auto=format&q=80',
+  moisturizers: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400&h=300&fit=crop&auto=format&q=80',
+  serums: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400&h=300&fit=crop&auto=format&q=80',
+  // Electronics
+  phones: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop&auto=format&q=80',
+  gadgets: 'https://images.unsplash.com/photo-1593640408182-31c228f02c25?w=400&h=300&fit=crop&auto=format&q=80',
+  laptops: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop&auto=format&q=80',
+  headphones: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop&auto=format&q=80',
+  'smart home': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop&auto=format&q=80',
+  repairs: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop&auto=format&q=80',
+  // Furniture
+  'living room': 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop&auto=format&q=80',
+  bedroom: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400&h=300&fit=crop&auto=format&q=80',
+  office: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=400&h=300&fit=crop&auto=format&q=80',
+  decor: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop&auto=format&q=80',
+  kitchen: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&auto=format&q=80',
+  // Groceries
+  'fresh food': 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=300&fit=crop&auto=format&q=80',
+  'fresh produce': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=300&fit=crop&auto=format&q=80',
+  pantry: 'https://images.unsplash.com/photo-1498579687545-d5a4fffb0a9e?w=400&h=300&fit=crop&auto=format&q=80',
+  vegetables: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=300&fit=crop&auto=format&q=80',
+  fruits: 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=400&h=300&fit=crop&auto=format&q=80',
+  household: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&h=300&fit=crop&auto=format&q=80',
+  // Services
+  packages: 'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=400&h=300&fit=crop&auto=format&q=80',
+  bookings: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&h=300&fit=crop&auto=format&q=80',
+  consultations: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop&auto=format&q=80',
+  // General
+  'new arrivals': 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop&auto=format&q=80',
+  'best sellers': 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=300&fit=crop&auto=format&q=80',
+  featured: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=400&h=300&fit=crop&auto=format&q=80',
+  sale: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&h=300&fit=crop&auto=format&q=80',
+};
+
+function photoForCategory(name: string): string | null {
+  return CATEGORY_PHOTO[name.toLowerCase().trim()] ?? null;
+}
 
 interface CategoryCard {
   id: string;
@@ -122,26 +185,40 @@ export function CategorySection() {
           {categories.map((cat) => {
             const gradient = gradientForName(cat.name);
             const letter = cat.name.charAt(0).toUpperCase();
+            const photo = photoForCategory(cat.name);
 
             return (
               <Link
                 key={cat.id}
                 href={`${basePath}/category/${slugify(cat.name)}`}
-                className="group relative overflow-hidden rounded-2xl aspect-[4/3] flex flex-col justify-end p-4 transition-transform hover:-translate-y-1 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-2xl aspect-[4/3] flex flex-col justify-end p-4 transition-all hover:-translate-y-1 hover:shadow-xl"
               >
-                {/* Gradient background */}
-                <div className={cn('absolute inset-0 bg-gradient-to-br', gradient)} />
+                {photo ? (
+                  <>
+                    <Image
+                      src={photo}
+                      alt={cat.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 50vw, 25vw"
+                      unoptimized
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
+                  </>
+                ) : (
+                  <>
+                    <div className={cn('absolute inset-0 bg-gradient-to-br', gradient)} />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute -top-4 -right-4 text-[8rem] font-black text-white/10 select-none leading-none"
+                    >
+                      {letter}
+                    </span>
+                  </>
+                )}
 
-                {/* Large decorative letter */}
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute -top-4 -right-4 text-[8rem] font-black text-white/10 select-none leading-none group-hover:text-white/15 transition-colors"
-                >
-                  {letter}
-                </span>
-
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors rounded-2xl" />
+                {/* Hover overlay */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-2xl" />
 
                 {/* Text content */}
                 <div className="relative z-10">

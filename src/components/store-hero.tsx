@@ -9,6 +9,40 @@ import { cn } from "@/lib/utils";
 import { getStoreBasePath } from "@/lib/url";
 import { ShieldCheck, Truck, Zap, Star, Clock, Leaf } from "lucide-react";
 
+const CATEGORY_HERO_IMAGES: Record<string, string> = {
+  fashion:     'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1400&h=700&fit=crop&auto=format&q=80',
+  clothing:    'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1400&h=700&fit=crop&auto=format&q=80',
+  apparel:     'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1400&h=700&fit=crop&auto=format&q=80',
+  food:        'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400&h=700&fit=crop&auto=format&q=80',
+  restaurant:  'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400&h=700&fit=crop&auto=format&q=80',
+  bakery:      'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1400&h=700&fit=crop&auto=format&q=80',
+  beauty:      'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=1400&h=700&fit=crop&auto=format&q=80',
+  cosmetics:   'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1400&h=700&fit=crop&auto=format&q=80',
+  skincare:    'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=1400&h=700&fit=crop&auto=format&q=80',
+  electronics: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=1400&h=700&fit=crop&auto=format&q=80',
+  technology:  'https://images.unsplash.com/photo-1593640408182-31c228f02c25?w=1400&h=700&fit=crop&auto=format&q=80',
+  gadgets:     'https://images.unsplash.com/photo-1593640408182-31c228f02c25?w=1400&h=700&fit=crop&auto=format&q=80',
+  furniture:   'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1400&h=700&fit=crop&auto=format&q=80',
+  home:        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1400&h=700&fit=crop&auto=format&q=80',
+  decor:       'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1400&h=700&fit=crop&auto=format&q=80',
+  groceries:   'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400&h=700&fit=crop&auto=format&q=80',
+  grocery:     'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1400&h=700&fit=crop&auto=format&q=80',
+  supermarket: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=1400&h=700&fit=crop&auto=format&q=80',
+  services:    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1400&h=700&fit=crop&auto=format&q=80',
+  consulting:  'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1400&h=700&fit=crop&auto=format&q=80',
+  health:      'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=1400&h=700&fit=crop&auto=format&q=80',
+  sports:      'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1400&h=700&fit=crop&auto=format&q=80',
+};
+
+function getCategoryHeroImage(category?: string): string | null {
+  if (!category) return null;
+  const cat = category.toLowerCase().trim();
+  for (const [key, url] of Object.entries(CATEGORY_HERO_IMAGES)) {
+    if (cat.includes(key)) return url;
+  }
+  return 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1400&h=700&fit=crop&auto=format&q=80';
+}
+
 const CATEGORY_TRUST: Record<string, { icon: React.ElementType; text: string }[]> = {
   fashion:     [{ icon: Truck, text: 'Nationwide delivery' }, { icon: ShieldCheck, text: 'Authentic products' }, { icon: Star, text: 'Loved by thousands' }],
   clothing:    [{ icon: Truck, text: 'Nationwide delivery' }, { icon: ShieldCheck, text: 'Quality guaranteed' }, { icon: Star, text: 'Top-rated styles' }],
@@ -65,7 +99,10 @@ export function StoreHero() {
 
   const basePath = isDemo ? `/demo/${store.slug}` : getStoreBasePath(store.subdomain);
   const aiHero = store?.storefrontConfig?.hero || store?.autoStoreConfig?.storefront?.hero;
-  const hasHeroImage = store?.isHeroBannerActive && store?.heroImageUrl;
+  const hasVendorImage = store?.isHeroBannerActive && store?.heroImageUrl;
+  const categoryHeroImage = getCategoryHeroImage(store?.category);
+  const effectiveHeroImage = hasVendorImage ? store.heroImageUrl! : (categoryHeroImage ?? undefined);
+  const isPhotoMode = !!effectiveHeroImage;
 
   const headline = store?.heroHeadline || aiHero?.headline || store?.name;
   const subheadline = store?.tagline || aiHero?.subheadline || getTagline(store?.category);
@@ -73,24 +110,25 @@ export function StoreHero() {
   const trust = getTrust(store?.category);
 
   return (
-    <section className={cn('relative overflow-hidden', hasHeroImage ? 'min-h-[520px] flex flex-col' : 'bg-secondary/40')}>
+    <section className={cn('relative overflow-hidden min-h-[520px] flex flex-col')}>
 
-      {/* Hero image mode */}
-      {hasHeroImage && (
+      {/* Photo background (vendor upload or category default) */}
+      {effectiveHeroImage && (
         <>
           <Image
-            src={store.heroImageUrl!}
+            src={effectiveHeroImage}
             alt={headline}
             fill
             className="object-cover"
             priority
+            unoptimized={!hasVendorImage}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/25" />
         </>
       )}
 
-      {/* Gradient mode — decorative blobs */}
-      {!hasHeroImage && (
+      {/* Fallback blobs — only if somehow no image */}
+      {!effectiveHeroImage && (
         <>
           <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
           <div className="pointer-events-none absolute bottom-0 -left-16 h-64 w-64 rounded-full bg-primary/5 blur-2xl" />
@@ -99,15 +137,14 @@ export function StoreHero() {
 
       {/* Content */}
       <div className={cn(
-        'relative z-10 container mx-auto px-4 md:px-6 py-16 md:py-24 flex flex-col items-center text-center gap-6',
-        hasHeroImage ? 'flex-1 justify-center' : ''
+        'relative z-10 container mx-auto px-4 md:px-6 py-16 md:py-24 flex flex-col items-center text-center gap-6 flex-1 justify-center',
       )}>
 
         {/* Category badge */}
         {store.category && (
           <span className={cn(
             'inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest border',
-            hasHeroImage
+            isPhotoMode
               ? 'bg-white/10 border-white/30 text-white backdrop-blur-sm'
               : 'bg-primary/10 border-primary/20 text-primary'
           )}>
@@ -118,7 +155,7 @@ export function StoreHero() {
         {/* Headline */}
         <h1 className={cn(
           'text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight max-w-2xl',
-          hasHeroImage ? 'text-white drop-shadow-md' : 'text-foreground'
+          isPhotoMode ? 'text-white drop-shadow-md' : 'text-foreground'
         )}>
           {headline}
         </h1>
@@ -127,7 +164,7 @@ export function StoreHero() {
         {subheadline && (
           <p className={cn(
             'text-base md:text-lg max-w-lg leading-relaxed',
-            hasHeroImage ? 'text-white/85' : 'text-muted-foreground'
+            isPhotoMode ? 'text-white/85' : 'text-muted-foreground'
           )}>
             {subheadline}
           </p>
@@ -138,7 +175,7 @@ export function StoreHero() {
           <SearchForm
             inputClassName={cn(
               'h-12 rounded-2xl border shadow-md text-sm',
-              hasHeroImage
+              isPhotoMode
                 ? 'bg-white/95 text-foreground placeholder:text-muted-foreground border-0'
                 : 'bg-background border-border'
             )}
@@ -151,7 +188,7 @@ export function StoreHero() {
             size="lg"
             className={cn(
               'rounded-2xl px-8 font-semibold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5',
-              hasHeroImage
+              isPhotoMode
                 ? 'bg-white text-gray-900 hover:bg-gray-100'
                 : 'bg-primary text-primary-foreground hover:bg-primary/90'
             )}
@@ -164,7 +201,7 @@ export function StoreHero() {
             variant="outline"
             className={cn(
               'rounded-2xl px-8 transition-all hover:-translate-y-0.5',
-              hasHeroImage
+              isPhotoMode
                 ? 'border-white/40 text-white hover:bg-white/10 backdrop-blur-sm'
                 : 'border-border text-foreground hover:bg-background'
             )}
@@ -178,18 +215,18 @@ export function StoreHero() {
       {/* Trust strip */}
       <div className={cn(
         'relative z-10 border-t',
-        hasHeroImage
+        isPhotoMode
           ? 'border-white/20 bg-black/35 backdrop-blur-sm'
           : 'border-border bg-background/80'
       )}>
         <div className="container mx-auto px-4 md:px-6 py-3.5">
           <div className={cn(
             'flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-10 text-sm',
-            hasHeroImage ? 'text-white/80' : 'text-muted-foreground'
+            isPhotoMode ? 'text-white/80' : 'text-muted-foreground'
           )}>
             {trust.map(({ icon: Icon, text }, i) => (
               <div key={i} className="flex items-center gap-2">
-                <Icon className={cn('h-4 w-4 shrink-0', hasHeroImage ? 'text-white/70' : 'text-primary')} />
+                <Icon className={cn('h-4 w-4 shrink-0', isPhotoMode ? 'text-white/70' : 'text-primary')} />
                 <span className="font-medium">{text}</span>
               </div>
             ))}

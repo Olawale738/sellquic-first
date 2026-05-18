@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 const CATEGORY_LABELS: Record<string, string> = {
   fashion: 'Fashion',
@@ -125,16 +126,37 @@ export default function ThemePickerPage({ params }: { params: { storeId: string 
                 isSelected ? 'border-primary shadow-md' : 'border-transparent hover:border-muted-foreground/30',
               )}
             >
-              {/* Gradient Preview */}
-              <div
-                className={cn(
-                  'h-24 w-full rounded-t-xl bg-gradient-to-br',
-                  theme.previewGradient,
-                )}
-              >
+              {/* Photo preview */}
+              <div className="relative h-36 w-full overflow-hidden">
+                <Image
+                  src={theme.previewImage}
+                  alt={theme.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 320px"
+                  unoptimized
+                />
+                {/* Dark scrim on bottom third */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                {/* Color swatches bottom-left */}
+                <div className="absolute bottom-2.5 left-3 flex gap-1.5">
+                  {Object.entries({
+                    primary: theme.colors['--primary'],
+                    bg: theme.colors['--background'],
+                    accent: theme.colors['--accent'],
+                  }).map(([k, hsl]) => (
+                    <span
+                      key={k}
+                      className="h-4 w-4 rounded-full border border-white/40 shadow"
+                      style={{ background: `hsl(${hsl})` }}
+                      title={k}
+                    />
+                  ))}
+                </div>
+                {/* Active checkmark */}
                 {isSelected && (
-                  <div className="flex h-full items-start justify-end p-2">
-                    <CheckCircle2 className="h-5 w-5 text-white drop-shadow" />
+                  <div className="absolute top-2 right-2 h-7 w-7 rounded-full bg-white flex items-center justify-center shadow">
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
                   </div>
                 )}
               </div>

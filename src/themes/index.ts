@@ -18,6 +18,7 @@ export interface ThemeConfig {
   description: string;
   category: string;
   isPremium: boolean;
+  previewImage: string;
   previewGradient: string;
   font: {
     className: string;
@@ -48,6 +49,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Black and gold luxury editorial for high-end fashion brands.',
     category: 'fashion',
     isPremium: true,
+    previewImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-gray-900 to-yellow-700',
     font: { className: playfair.className },
     colors: {
@@ -73,6 +75,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Dusty rose and champagne tones for feminine fashion boutiques.',
     category: 'fashion',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-rose-200 to-amber-100',
     font: { className: raleway.className },
     colors: {
@@ -98,6 +101,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Bold orange-red and white for streetwear and urban fashion drops.',
     category: 'fashion',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-orange-500 to-red-600',
     font: { className: josefin.className },
     colors: {
@@ -125,6 +129,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Warm amber and terracotta for cozy cafes and food businesses.',
     category: 'food',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-amber-400 to-orange-500',
     font: { className: nunito.className },
     colors: {
@@ -150,6 +155,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Fresh green and lime palette for healthy food and juice bars.',
     category: 'food',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-green-400 to-lime-500',
     font: { className: outfit.className },
     colors: {
@@ -175,6 +181,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Dark charcoal and gold for upscale fine dining experiences.',
     category: 'food',
     isPremium: true,
+    previewImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-gray-800 to-yellow-600',
     font: { className: cormorant.className },
     colors: {
@@ -202,6 +209,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Rose gold and blush pink for premium cosmetics and beauty brands.',
     category: 'beauty',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-rose-300 to-pink-400',
     font: { className: lora.className },
     colors: {
@@ -227,6 +235,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Sage green and cream for clean beauty and natural skincare.',
     category: 'beauty',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-green-200 to-stone-100',
     font: { className: dmSans.className },
     colors: {
@@ -252,6 +261,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Deep purple and gold dark luxury for high-end beauty brands.',
     category: 'beauty',
     isPremium: true,
+    previewImage: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-purple-900 to-yellow-600',
     font: { className: cormorant.className },
     colors: {
@@ -279,6 +289,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Sleek dark navy and electric blue for cutting-edge tech stores.',
     category: 'electronics',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1593640408182-31c228f02c25?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-slate-900 to-blue-600',
     font: { className: spaceGrotesk.className },
     colors: {
@@ -304,6 +315,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Clean white and cobalt Apple-style minimal for premium electronics.',
     category: 'electronics',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-white to-blue-500',
     font: { className: dmSans.className },
     colors: {
@@ -331,6 +343,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Warm oat and birch tones for Scandinavian-style furniture stores.',
     category: 'furniture',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-amber-100 to-stone-200',
     font: { className: lora.className },
     colors: {
@@ -356,6 +369,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Terracotta and cream for earthy, artisan home decor brands.',
     category: 'furniture',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-orange-300 to-stone-200',
     font: { className: outfit.className },
     colors: {
@@ -383,6 +397,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Forest green and cream for farm-fresh grocery and produce stores.',
     category: 'groceries',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-green-700 to-stone-100',
     font: { className: poppins.className },
     colors: {
@@ -408,6 +423,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Orange and yellow vibrancy for lively market-style grocery stores.',
     category: 'groceries',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-orange-400 to-yellow-400',
     font: { className: nunito.className },
     colors: {
@@ -435,6 +451,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Navy and white professional design for service-based businesses.',
     category: 'services',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-slate-700 to-blue-100',
     font: { className: spaceGrotesk.className },
     colors: {
@@ -460,6 +477,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Purple and coral creative agency style for bold consulting brands.',
     category: 'services',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-purple-500 to-rose-400',
     font: { className: dmSans.className },
     colors: {
@@ -487,6 +505,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Clean teal and timeless layout. Works for any store.',
     category: 'general',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-teal-400 to-cyan-200',
     font: { className: ptSans.className },
     colors: {
@@ -512,6 +531,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Pure black and white minimal for a bold editorial retail look.',
     category: 'general',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-gray-900 to-gray-100',
     font: { className: josefin.className },
     colors: {
@@ -537,6 +557,7 @@ export const themes: Record<string, ThemeConfig> = {
     description: 'Indigo and vivid accents for energetic multi-category retail.',
     category: 'general',
     isPremium: false,
+    previewImage: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&h=300&fit=crop&auto=format&q=80',
     previewGradient: 'from-indigo-600 to-violet-400',
     font: { className: outfit.className },
     colors: {

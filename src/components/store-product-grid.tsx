@@ -155,6 +155,37 @@ function PriceRangeFilter({
   );
 }
 
+const SECTION_LABELS: Record<string, { eyebrow: string; heading: string }> = {
+  fashion:     { eyebrow: 'Latest styles',    heading: 'New Arrivals' },
+  clothing:    { eyebrow: 'Latest styles',    heading: 'New Arrivals' },
+  apparel:     { eyebrow: 'Latest styles',    heading: 'New Arrivals' },
+  food:        { eyebrow: 'On the menu',      heading: 'Fresh Picks' },
+  restaurant:  { eyebrow: "Today's menu",     heading: "Chef's Selections" },
+  bakery:      { eyebrow: 'Baked fresh',      heading: "Today's Bakes" },
+  catering:    { eyebrow: 'Made to order',    heading: 'Our Menu' },
+  beauty:      { eyebrow: 'Just in',          heading: 'New Beauty Drops' },
+  cosmetics:   { eyebrow: 'Just in',          heading: 'New Arrivals' },
+  skincare:    { eyebrow: 'Glow essentials',  heading: 'Skincare Picks' },
+  electronics: { eyebrow: 'Just landed',      heading: 'Latest Tech' },
+  technology:  { eyebrow: 'Just launched',    heading: 'New Devices' },
+  furniture:   { eyebrow: 'Just in',          heading: 'New Collections' },
+  home:        { eyebrow: 'Just in',          heading: 'Home Picks' },
+  groceries:   { eyebrow: 'Farm fresh',       heading: "Today's Stock" },
+  grocery:     { eyebrow: 'Farm fresh',       heading: 'Fresh Stock' },
+  services:    { eyebrow: 'Available now',    heading: 'Our Services' },
+  health:      { eyebrow: 'Wellness picks',   heading: 'Health & Wellness' },
+  sports:      { eyebrow: 'Gear up',          heading: 'Sports & Fitness' },
+};
+
+function getSectionLabel(category?: string) {
+  if (!category) return { eyebrow: 'Just landed', heading: 'New Arrivals' };
+  const cat = category.toLowerCase();
+  for (const [key, val] of Object.entries(SECTION_LABELS)) {
+    if (cat.includes(key)) return val;
+  }
+  return { eyebrow: 'Just landed', heading: 'New Arrivals' };
+}
+
 /* ─── Main Grid (inner, wrapped by Suspense) ─── */
 function StoreProductGridInner() {
   const { store, isDemo } = useStore();
@@ -235,6 +266,7 @@ function StoreProductGridInner() {
 
 
   const hasActiveFilters = filter !== 'all' || sort !== 'newest' || priceMin !== priceRange.min || priceMax !== priceRange.max;
+  const sectionLabel = getSectionLabel(store?.category);
 
   if (!store) {
     return (
@@ -291,8 +323,8 @@ function StoreProductGridInner() {
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-1">Just landed</p>
-            <h2 className="text-2xl font-bold tracking-tight">New arrivals</h2>
+            <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-1">{sectionLabel.eyebrow}</p>
+            <h2 className="text-2xl font-bold tracking-tight">{filter !== 'all' ? filter : sectionLabel.heading}</h2>
             {totalCount > 0 && (
               <p className="text-sm text-muted-foreground mt-1">
                 {totalCount === 1 ? '1 product' : `${totalCount} products`}
