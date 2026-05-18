@@ -19,6 +19,7 @@ import { Badge } from './ui/badge';
 import { useState } from 'react';
 import { getStoreBasePath } from '@/lib/url';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from './ui/collapsible';
+import { StoreSupportDropdown } from './store/StoreSupportDropdown';
 
 const MainMenuSheet = () => {
     const { store, isDemo } = useStore();
@@ -63,7 +64,7 @@ const MainMenuSheet = () => {
                       </Collapsible>
                     )}
 
-                    <Link href={`${basePath}#track-order`} onClick={() => setIsSheetOpen(false)} className="block py-2 text-muted-foreground hover:text-primary">Track Order</Link>
+                    <Link href="#" onClick={(e) => { e.preventDefault(); setIsSheetOpen(false); }} className="block py-2 text-muted-foreground hover:text-primary">Help &amp; Track Order</Link>
                     {store?.isAboutUsActive && <Link href={`${basePath}/about`} onClick={() => setIsSheetOpen(false)} className="block py-2 text-muted-foreground hover:text-primary">About Us</Link>}
                     {store?.isReturnPolicyActive && <Link href={`${basePath}/return-policy`} onClick={() => setIsSheetOpen(false)} className="block py-2 text-muted-foreground hover:text-primary">Return Policy</Link>}
                  </nav>
@@ -177,24 +178,16 @@ export function StoreHeader() {
                 </div>
 
                 {/* Desktop nav links — center-right */}
-                <nav className="hidden sm:flex items-center gap-6 flex-1 justify-center sm:justify-end sm:mr-4">
+                <nav className="hidden sm:flex items-center gap-4 flex-1 justify-center sm:justify-end sm:mr-4">
                     <Link href={`${basePath}/catalog`} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
                         Shop
                     </Link>
-                    <Link href={`${basePath}#track-order`} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
-                        Track Order
-                    </Link>
                     {store?.isAboutUsActive && (
                         <Link href={`${basePath}/about`} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
-                            Contact
+                            About
                         </Link>
                     )}
-                    {!store?.isAboutUsActive && (
-                        <Link href={`${basePath}#contact`} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
-                            Contact
-                        </Link>
-                    )}
-                    {/* Mobile menu hidden on sm+ — only shown via MainMenuSheet on mobile */}
+                    <StoreSupportDropdown />
                 </nav>
 
                 {/* Cart always far right */}

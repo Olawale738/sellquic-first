@@ -3,7 +3,6 @@ import { StoreHero } from '@/components/store-hero';
 import { StoreProductGrid } from '@/components/store-product-grid';
 import { FaqSection } from '@/components/store/FaqSection';
 import { CategorySection } from '@/components/store/CategorySection';
-import { StoreContactBand } from '@/components/store/StoreContactBand';
 import { AboutSection } from '@/components/store/AboutSection';
 import { StoreFeaturesSection } from '@/components/store/StoreFeaturesSection';
 import { useStore } from '@/context/store-context';
@@ -21,7 +20,6 @@ function CategoryStoreLayout() {
         <StoreFeaturesSection />
         <AboutSection />
         <FaqSection />
-        <StoreContactBand />
       </div>
     );
   }
@@ -34,7 +32,6 @@ function CategoryStoreLayout() {
         <StoreProductGrid />
         <StoreFeaturesSection />
         <AboutSection />
-        <StoreContactBand />
       </div>
     );
   }
@@ -48,7 +45,6 @@ function CategoryStoreLayout() {
         <StoreFeaturesSection />
         <AboutSection />
         <FaqSection />
-        <StoreContactBand />
       </div>
     );
   }
@@ -60,7 +56,6 @@ function CategoryStoreLayout() {
         <CategorySection />
         <StoreProductGrid />
         <StoreFeaturesSection />
-        <StoreContactBand />
       </div>
     );
   }
@@ -73,7 +68,6 @@ function CategoryStoreLayout() {
         <StoreProductGrid />
         <StoreFeaturesSection />
         <AboutSection />
-        <StoreContactBand />
       </div>
     );
   }
@@ -85,7 +79,6 @@ function CategoryStoreLayout() {
         <CategorySection />
         <StoreProductGrid />
         <StoreFeaturesSection />
-        <StoreContactBand />
       </div>
     );
   }
@@ -99,7 +92,6 @@ function CategoryStoreLayout() {
         <StoreFeaturesSection />
         <AboutSection />
         <FaqSection />
-        <StoreContactBand />
       </div>
     );
   }
@@ -113,7 +105,6 @@ function CategoryStoreLayout() {
       <StoreFeaturesSection />
       <AboutSection />
       <FaqSection />
-      <StoreContactBand />
     </div>
   );
 }
