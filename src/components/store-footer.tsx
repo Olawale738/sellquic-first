@@ -47,7 +47,7 @@ export function StoreFooter() {
   ];
 
   return (
-    <footer className="border-t bg-background">
+    <footer className="bg-black text-white">
       <div className="container mx-auto px-4 md:px-6 py-5">
 
         {/* Single horizontal row */}
@@ -64,7 +64,7 @@ export function StoreFooter() {
                 className="rounded-full"
               />
             )}
-            <span className="font-bold text-sm">{store.name}</span>
+            <span className="font-bold text-sm text-white">{store.name}</span>
           </Link>
 
           {/* Nav links inline */}
@@ -74,7 +74,7 @@ export function StoreFooter() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                  className="text-xs text-white/60 hover:text-white transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -87,17 +87,17 @@ export function StoreFooter() {
             <div className="flex items-center gap-3 shrink-0">
               {instagram && (
                 <Link href={`https://instagram.com/${instagram}`} target="_blank" aria-label="Instagram">
-                  <Instagram className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
+                  <Instagram className="h-4 w-4 text-white/60 hover:text-white transition-colors" />
                 </Link>
               )}
               {facebook && (
                 <Link href={facebook} target="_blank" aria-label="Facebook">
-                  <Facebook className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
+                  <Facebook className="h-4 w-4 text-white/60 hover:text-white transition-colors" />
                 </Link>
               )}
               {tiktok && (
                 <Link href={`https://tiktok.com/@${tiktok}`} target="_blank" aria-label="TikTok">
-                  <TikTokIcon className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
+                  <TikTokIcon className="h-4 w-4 text-white/60 hover:text-white transition-colors" />
                 </Link>
               )}
             </div>
@@ -105,9 +105,9 @@ export function StoreFooter() {
         </div>
 
         {/* Copyright line */}
-        <div className="mt-4 pt-4 border-t flex flex-col sm:flex-row justify-between items-center gap-1 text-[11px] text-muted-foreground/60">
+        <div className="mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-1 text-[11px] text-white/30">
           <p>&copy; {currentYear} {store.name}. All Rights Reserved.</p>
-          <p>Powered by <Link href="https://sellquic.com/signup" className="font-semibold text-primary hover:underline">SellQuic</Link></p>
+          <p>Powered by <Link href="https://sellquic.com/signup" className="font-semibold text-white/60 hover:text-white transition-colors">SellQuic</Link></p>
         </div>
 
       </div>
