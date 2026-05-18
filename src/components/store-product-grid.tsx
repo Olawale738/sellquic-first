@@ -283,20 +283,9 @@ function StoreProductGridInner() {
             <p className="text-muted-foreground max-w-md mx-auto mb-8 leading-relaxed">
               We&apos;re carefully curating our collection for you. Check back soon — great things are on the way.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button variant="outline" size="lg" className="rounded-xl px-8 gap-2" asChild>
-                <a href="#track-order">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>
-                  Track an Order
-                </a>
-              </Button>
-              <Button size="lg" className="rounded-xl px-8 gap-2" asChild>
-                <a href="#help">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /></svg>
-                  Contact Us
-                </a>
-              </Button>
-            </div>
+            <p className="text-xs text-muted-foreground/60">
+              Need help? Use the <strong className="text-foreground/60">Help</strong> button in the top navigation.
+            </p>
           </div>
         </div>
       </section>
@@ -543,14 +532,9 @@ function StoreProductGridInner() {
               <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
                 We&apos;re busy curating amazing products just for you. Check back soon — exciting things are on the way!
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Button variant="outline" asChild>
-                  <a href="#track-order">Track an Order</a>
-                </Button>
-                <Button asChild>
-                  <a href="#help">Contact Us</a>
-                </Button>
-              </div>
+              <p className="text-xs text-muted-foreground/60">
+                Need help? Use the <strong className="text-foreground/60">Help</strong> button in the top navigation.
+              </p>
             </>
           )}
         </div>
