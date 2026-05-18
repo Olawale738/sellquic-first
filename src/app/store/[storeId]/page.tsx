@@ -6,6 +6,7 @@ import { CategorySection } from '@/components/store/CategorySection';
 import { OrderTrackingSection } from '@/components/store/OrderTrackingSection';
 import { HelpSection } from '@/components/store/HelpSection';
 import { AboutSection } from '@/components/store/AboutSection';
+import { StoreFeaturesSection } from '@/components/store/StoreFeaturesSection';
 import { useStore } from '@/context/store-context';
 
 function CategoryStoreLayout() {
@@ -18,6 +19,7 @@ function CategoryStoreLayout() {
         <StoreHero />
         <CategorySection />
         <StoreProductGrid />
+        <StoreFeaturesSection />
         <AboutSection />
         <HelpSection />
         <FaqSection />
@@ -31,6 +33,7 @@ function CategoryStoreLayout() {
         <StoreHero />
         <CategorySection />
         <StoreProductGrid />
+        <StoreFeaturesSection />
         <AboutSection />
         <OrderTrackingSection />
         <HelpSection />
@@ -44,6 +47,7 @@ function CategoryStoreLayout() {
         <StoreHero />
         <CategorySection />
         <StoreProductGrid />
+        <StoreFeaturesSection />
         <AboutSection />
         <HelpSection />
         <FaqSection />
@@ -57,6 +61,7 @@ function CategoryStoreLayout() {
         <StoreHero />
         <CategorySection />
         <StoreProductGrid />
+        <StoreFeaturesSection />
         <OrderTrackingSection />
         <HelpSection />
       </div>
@@ -69,6 +74,7 @@ function CategoryStoreLayout() {
         <StoreHero />
         <CategorySection />
         <StoreProductGrid />
+        <StoreFeaturesSection />
         <AboutSection />
         <HelpSection />
       </div>
@@ -81,6 +87,7 @@ function CategoryStoreLayout() {
         <StoreHero />
         <CategorySection />
         <StoreProductGrid />
+        <StoreFeaturesSection />
         <OrderTrackingSection />
         <HelpSection />
       </div>
@@ -93,6 +100,7 @@ function CategoryStoreLayout() {
         <StoreHero />
         <CategorySection />
         <StoreProductGrid />
+        <StoreFeaturesSection />
         <AboutSection />
         <HelpSection />
         <FaqSection />
@@ -106,6 +114,7 @@ function CategoryStoreLayout() {
       <StoreHero />
       <CategorySection />
       <StoreProductGrid />
+      <StoreFeaturesSection />
       <AboutSection />
       <OrderTrackingSection />
       <HelpSection />
