@@ -14,7 +14,7 @@ import {
 import { ProductCard } from './store-product-card';
 import { Button } from './ui/button';
 import { Product } from '@/types/product';
-import { X, SlidersHorizontal, Grid3X3, List, ChevronDown } from 'lucide-react';
+import { X, SlidersHorizontal, Grid3X3, List, ChevronDown, Sparkles, ShieldCheck, Zap, PackageSearch } from 'lucide-react';
 import { cn, slugify } from '@/lib/utils';
 import { getStoreBasePath } from '@/lib/url';
 
@@ -271,22 +271,77 @@ function StoreProductGridInner() {
   // ── Empty store: no products at all ───────────────────────────────────────
   if (!store.products?.length) {
     return (
-      <section className="py-20 md:py-28 bg-background border-t" id="products">
-        <div className="container mx-auto px-4 md:px-6 max-w-3xl">
-          <div className="rounded-3xl border border-dashed border-muted-foreground/25 bg-muted/20 px-8 py-16 text-center">
-            <div className="mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 ring-8 ring-primary/5">
-              <svg className="h-8 w-8 text-primary" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
-              </svg>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">Products Coming Soon</h2>
-            <p className="text-muted-foreground max-w-md mx-auto mb-8 leading-relaxed">
-              We&apos;re carefully curating our collection for you. Check back soon — great things are on the way.
-            </p>
-            <p className="text-xs text-muted-foreground/60">
-              Need help? Use the <strong className="text-foreground/60">Help</strong> button in the top navigation.
+      <section className="relative overflow-hidden border-t bg-background" id="products">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.07),transparent_60%),radial-gradient(ellipse_at_bottom_left,hsl(var(--primary)/0.04),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:48px_48px] opacity-30" />
+
+        <div className="relative container mx-auto px-4 md:px-6 py-20 md:py-28">
+
+          {/* ── Top badge ── */}
+          <div className="flex justify-center mb-8">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/8 px-4 py-1.5 text-xs font-semibold text-primary uppercase tracking-widest">
+              <Sparkles className="h-3 w-3" />
+              Launching Soon
+            </span>
+          </div>
+
+          {/* ── Headline ── */}
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4 leading-tight">
+              Something{' '}
+              <span className="text-primary">exceptional</span>{' '}
+              is on the way
+            </h2>
+            <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
+              {store.name} is putting the finishing touches on a carefully curated collection.
+              Every item is being handpicked to meet our quality standards — check back soon.
             </p>
           </div>
+
+          {/* ── Promise cards ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 max-w-3xl mx-auto mb-12">
+            {[
+              {
+                icon: <PackageSearch className="h-5 w-5 text-primary" />,
+                bg: 'bg-primary/10',
+                title: 'Curated Selection',
+                desc: 'Every product hand-picked for quality, value, and relevance.',
+              },
+              {
+                icon: <Zap className="h-5 w-5 text-amber-500" />,
+                bg: 'bg-amber-500/10',
+                title: 'Fast Delivery',
+                desc: 'Reliable nationwide shipping with real-time order tracking.',
+              },
+              {
+                icon: <ShieldCheck className="h-5 w-5 text-emerald-500" />,
+                bg: 'bg-emerald-500/10',
+                title: 'Quality Guaranteed',
+                desc: 'Verified authentic products backed by our quality promise.',
+              },
+            ].map((item) => (
+              <div
+                key={item.title}
+                className="rounded-2xl border bg-card/80 backdrop-blur-sm p-5 flex flex-col gap-3 hover:shadow-md hover:border-primary/20 transition-all"
+              >
+                <div className={`h-10 w-10 rounded-xl ${item.bg} flex items-center justify-center`}>
+                  {item.icon}
+                </div>
+                <div>
+                  <p className="font-semibold text-sm mb-1">{item.title}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Footer note ── */}
+          <p className="text-center text-xs text-muted-foreground/50">
+            Questions about an existing order? Use the{' '}
+            <span className="font-semibold text-muted-foreground/70">Help</span> button in the navigation above.
+          </p>
+
         </div>
       </section>
     );
@@ -525,16 +580,16 @@ function StoreProductGridInner() {
             </>
           ) : (
             <>
-              <div className="mx-auto w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6 text-4xl">
-                🛍️
+              <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-5">
+                <PackageSearch className="h-7 w-7 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Products Coming Soon</h3>
-              <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
-                We&apos;re busy curating amazing products just for you. Check back soon — exciting things are on the way!
+              <h3 className="text-xl font-bold mb-2">No products in this category yet</h3>
+              <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-5">
+                This section is being stocked. Browse other categories or check back soon.
               </p>
-              <p className="text-xs text-muted-foreground/60">
-                Need help? Use the <strong className="text-foreground/60">Help</strong> button in the top navigation.
-              </p>
+              <Button variant="outline" onClick={clearAllFilters} className="rounded-xl px-6">
+                View all products
+              </Button>
             </>
           )}
         </div>
