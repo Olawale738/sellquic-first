@@ -207,7 +207,7 @@ export function StoreHero() {
             )}
             asChild
           >
-            <Link href="#track-order">Track My Order</Link>
+            <Link href={`${basePath}/catalog`}>Browse Collection</Link>
           </Button>
         </div>
       </div>
