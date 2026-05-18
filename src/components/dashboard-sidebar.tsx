@@ -29,6 +29,7 @@ import {
   Sparkles,
   Instagram,
   Rocket,
+  Palette,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -63,6 +64,7 @@ const iconMap: { [key: string]: React.ElementType } = {
   Sparkles,
   Instagram,
   Rocket,
+  Palette,
 };
 
 const NavLink = ({ href, children, icon: iconName, active, isSubmenu = false, onClick, badgeCount }: { href: string; children: React.ReactNode; icon: string; active?: boolean; isSubmenu?: boolean, onClick?: () => void, badgeCount?: number }) => {
@@ -203,6 +205,16 @@ export default function DashboardSidebar({ isSheetOpen, closeSheet }: DashboardS
                     <NavLink href="/dashboard/domain" icon="Globe" isSubmenu onClick={closeSheet}>Domain</NavLink>
                     <NavLink href="/dashboard/settings" icon="Settings" isSubmenu onClick={closeSheet}>Appearance</NavLink>
                     <NavLink href="/dashboard/ai-assistant" icon="Bot" isSubmenu onClick={closeSheet}>AI Assistant</NavLink>
+                    {activeStore?.id && (
+                      <NavLink
+                        href={`/dashboard/stores/${activeStore.id}/theme`}
+                        icon="Palette"
+                        isSubmenu
+                        onClick={closeSheet}
+                      >
+                        Themes
+                      </NavLink>
+                    )}
                 </CollapsibleContent>
             </Collapsible>
 

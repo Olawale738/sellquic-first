@@ -190,19 +190,35 @@ function CatalogPageInner() {
         <div className="flex-1 min-w-0">
           {visible.length === 0 ? (
             <div className="text-center py-20">
-              <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                <Search className="h-7 w-7 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-semibold mb-1">No products found</h3>
-              <p className="text-muted-foreground text-sm mb-4">
-                Try adjusting your search or category filter.
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => { setSearch(''); setActiveCategory('all'); }}
-              >
-                Clear filters
-              </Button>
+              {store.products?.length === 0 ? (
+                // New store — no products at all
+                <>
+                  <div className="mx-auto w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-6 text-4xl">
+                    🛍️
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Products Coming Soon</h3>
+                  <p className="text-muted-foreground text-sm max-w-sm mx-auto mb-6">
+                    We&apos;re busy curating amazing products just for you. Check back soon!
+                  </p>
+                </>
+              ) : (
+                // Has products but filters returned nothing
+                <>
+                  <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                    <Search className="h-7 w-7 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-1">No products found</h3>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    Try adjusting your search or category filter.
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={() => { setSearch(''); setActiveCategory('all'); }}
+                  >
+                    Clear filters
+                  </Button>
+                </>
+              )}
             </div>
           ) : (
             <>
