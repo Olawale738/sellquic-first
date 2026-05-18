@@ -3,6 +3,7 @@
 import { useStore } from '@/context/store-context';
 import { Button } from '@/components/ui/button';
 import { MessageCircle, Mail, MapPin } from 'lucide-react';
+import type { AutoStoreSection } from '@/types/auto-store-config';
 
 export function HelpSection() {
   const { store } = useStore();
@@ -10,13 +11,18 @@ export function HelpSection() {
   const config = store?.storefrontConfig?.help_section;
   const contact = store?.storefrontConfig?.contact_section;
 
-  const headline = config?.headline || "Can't find what you're looking for?";
-  const description = config?.description || "Our team is ready to help you find the perfect product or answer any question. Reach out and we'll get back to you quickly.";
-  const cta = config?.cta || 'Contact Us';
+  // Fallback: read from autoStoreConfig sections when storefrontConfig is absent
+  const autoSections: AutoStoreSection[] = store?.autoStoreConfig?.storefront?.sections ?? [];
+  const autoHelp = autoSections.find((s) => s.section_type === 'help');
+  const autoContact = store?.autoStoreConfig?.vendor_profile?.contact;
 
-  const phone = contact?.phone || store?.sellerPhone;
-  const email = contact?.email || store?.sellerEmail;
-  const location = contact?.location || store?.location;
+  const headline = config?.headline || autoHelp?.headline || "Can't find what you're looking for?";
+  const description = config?.description || autoHelp?.description || "Our team is ready to help you find the perfect product or answer any question. Reach out and we'll get back to you quickly.";
+  const cta = config?.cta || autoHelp?.cta || 'Contact Us';
+
+  const phone = contact?.phone || autoContact?.phone || store?.sellerPhone;
+  const email = contact?.email || autoContact?.email || store?.sellerEmail;
+  const location = contact?.location || store?.location || autoContact?.location;
   const whatsappEnabled = contact?.whatsapp_enabled ?? !!phone;
 
   const whatsappUrl = phone

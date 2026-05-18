@@ -5,6 +5,7 @@ import { useStore } from '@/context/store-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PackageSearch, CheckCircle2, Clock, Truck } from 'lucide-react';
+import type { AutoStoreSection } from '@/types/auto-store-config';
 
 export function OrderTrackingSection() {
   const { store } = useStore();
@@ -12,10 +13,15 @@ export function OrderTrackingSection() {
   const [submitted, setSubmitted] = useState(false);
 
   const config = store?.storefrontConfig?.order_tracking;
-  const headline = config?.headline || 'Track Your Order';
-  const description = config?.description || 'Enter your order reference to get a live status update. No account needed.';
+
+  // Fallback: read from autoStoreConfig sections when storefrontConfig is absent
+  const autoSections: AutoStoreSection[] = store?.autoStoreConfig?.storefront?.sections ?? [];
+  const autoTracking = autoSections.find((s) => s.section_type === 'tracking');
+
+  const headline = config?.headline || autoTracking?.headline || 'Track Your Order';
+  const description = config?.description || autoTracking?.description || 'Enter your order reference to get a live status update. No account needed.';
   const placeholder = config?.input_placeholder || 'e.g. SQ-2024-00123';
-  const cta = config?.cta || 'Track Order';
+  const cta = config?.cta || autoTracking?.cta || 'Track Order';
 
   const handleTrack = (e: React.FormEvent) => {
     e.preventDefault();

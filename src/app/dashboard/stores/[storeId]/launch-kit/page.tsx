@@ -1,15 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Circle, Copy, ExternalLink, Megaphone, Search, Package, BarChart3, Loader2 } from 'lucide-react';
+import { CheckCircle, Circle, Copy, ExternalLink, Megaphone, Search, Package, BarChart3, Loader2, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { regenerateStoreConfigAction } from '@/lib/actions';
+import type { AutoStoreConfig } from '@/types/auto-store-config';
 
 function CopyBlock({ label, value }: { label: string; value: string }) {
   const { toast } = useToast();
@@ -45,10 +47,27 @@ export default function LaunchKitPage({ params }: { params: { storeId: string } 
   const { activeStore } = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
-  const [config, setConfig] = useState<any>(null);
+  const [config, setConfig] = useState<AutoStoreConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
 
   const storeId = params.storeId || activeStore?.id;
+
+  function handleRegenerate() {
+    if (!storeId) return;
+    startTransition(async () => {
+      const result = await regenerateStoreConfigAction(storeId);
+      if (result.success) {
+        toast({ title: 'Store config regenerated!', description: 'Refreshing Launch Kit…' });
+        setLoading(true);
+        getDoc(doc(firestore!, 'stores', storeId)).then((snap) => {
+          if (snap.exists()) setConfig(snap.data()?.autoStoreConfig ?? null);
+        }).finally(() => setLoading(false));
+      } else {
+        toast({ title: 'Regeneration failed', description: result.message, variant: 'destructive' });
+      }
+    });
+  }
 
   useEffect(() => {
     if (!storeId || !firestore) return;
@@ -100,11 +119,25 @@ export default function LaunchKitPage({ params }: { params: { storeId: string } 
 
   return (
     <div className="space-y-8 max-w-3xl">
-      <div>
-        <h1 className="text-2xl font-bold">Launch Kit</h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          AI-generated marketing content, SEO, checklist, and readiness report for your store.
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Launch Kit</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            AI-generated marketing content, SEO, checklist, and readiness report for your store.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRegenerate}
+          disabled={isPending}
+          className="shrink-0"
+        >
+          {isPending
+            ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            : <RefreshCw className="h-4 w-4 mr-2" />}
+          Regenerate
+        </Button>
       </div>
 
       {/* Store Readiness */}

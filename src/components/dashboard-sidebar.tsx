@@ -28,6 +28,7 @@ import {
   Mail,
   Sparkles,
   Instagram,
+  Rocket,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -61,6 +62,7 @@ const iconMap: { [key: string]: React.ElementType } = {
   Mail,
   Sparkles,
   Instagram,
+  Rocket,
 };
 
 const NavLink = ({ href, children, icon: iconName, active, isSubmenu = false, onClick, badgeCount }: { href: string; children: React.ReactNode; icon: string; active?: boolean; isSubmenu?: boolean, onClick?: () => void, badgeCount?: number }) => {
@@ -95,7 +97,7 @@ interface DashboardSidebarProps {
 
 export default function DashboardSidebar({ isSheetOpen, closeSheet }: DashboardSidebarProps) {
   const pathname = usePathname();
-  const { abandonedCartsCount, inboxCount } = useAuth();
+  const { abandonedCartsCount, inboxCount, activeStore } = useAuth();
   const [isProductsOpen, setIsProductsOpen] = useState(pathname.startsWith('/dashboard/products'));
   const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(pathname.startsWith('/dashboard/analytics') || pathname === '/dashboard');
   const [isMarketingOpen, setIsMarketingOpen] = useState(pathname.startsWith('/dashboard/marketing'));
@@ -170,6 +172,16 @@ export default function DashboardSidebar({ isSheetOpen, closeSheet }: DashboardS
                 <NavLink href="/dashboard/marketing/discounts" icon="Percent" isSubmenu onClick={closeSheet}>Discounts & Promos</NavLink>
                 <NavLink href="/dashboard/marketing/abandoned-carts" icon="History" isSubmenu onClick={closeSheet} badgeCount={abandonedCartsCount}>Abandoned Carts</NavLink>
                 <NavLink href="/dashboard/marketing/tracking" icon="LineChart" isSubmenu onClick={closeSheet}>Tracking & SEO</NavLink>
+                {activeStore?.id && (
+                  <NavLink
+                    href={`/dashboard/stores/${activeStore.id}/launch-kit`}
+                    icon="Rocket"
+                    isSubmenu
+                    onClick={closeSheet}
+                  >
+                    Launch Kit
+                  </NavLink>
+                )}
               </CollapsibleContent>
             </Collapsible>
 

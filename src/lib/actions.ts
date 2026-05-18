@@ -5,7 +5,7 @@ import { Resend } from 'resend';
 import { revalidatePath } from 'next/cache';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { slugify } from './utils';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { generateAutoStoreConfig } from './store-ai';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -34,221 +34,15 @@ function getDefaultCategories(category: string): string[] {
   );
 }
 
-// ─── AI storefront config generator (Full Auto Store Builder) ────────────────
+// ─── AI storefront config generator (delegates to shared store-ai utility) ───
 async function generateStorefrontConfig(
   businessName: string,
   category: string,
   subcategory: string,
   email: string,
   phone: string,
-): Promise<{ storefrontConfig: any; autoStoreConfig: any } | null> {
-  try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-
-    const systemInstruction = `You are SellQuic Auto Store Builder AI. Transform vendor signup data into a complete, professional, category-specific ecommerce store configuration. Return ONLY valid JSON — no markdown, no code blocks, no explanation.`;
-
-    const userPrompt = `Build a complete store for this vendor. Every field must have real, professional, persuasive content — NEVER use Lorem ipsum. All prices must be "PLACEHOLDER". Mark all AI-generated product data clearly.
-
-Vendor:
-- Business Name: ${businessName}
-- Category: ${category}
-- Subcategory: ${subcategory || category}
-- Email: ${email}
-- Phone/WhatsApp: ${phone}
-- Currency: GHS
-- Language: English
-
-Return this exact JSON structure with all fields filled:
-
-{
-  "vendor_profile": {
-    "business_name": "${businessName}",
-    "business_category": "${category}",
-    "subcategory": "${subcategory || category}",
-    "language": "English",
-    "currency": "GHS",
-    "contact": { "email": "${email}", "phone": "${phone}", "whatsapp": "${phone}" },
-    "missing_fields": []
-  },
-  "business_identity": {
-    "tagline": "",
-    "brand_voice": "",
-    "short_description": "",
-    "long_description": "",
-    "trust_message": "",
-    "customer_promise": "",
-    "visual_direction": ""
-  },
-  "theme": {
-    "theme_name": "",
-    "theme_category": "",
-    "color_palette": { "primary": "", "secondary": "", "accent": "", "background": "", "text": "" },
-    "typography": { "heading_style": "", "body_style": "" },
-    "button_style": "",
-    "card_style": "",
-    "layout_style": ""
-  },
-  "storefront": {
-    "store_name": "${businessName}",
-    "navigation": ["Shop", "Track Order", "Contact"],
-    "hero": {
-      "headline": "",
-      "subheadline": "",
-      "primary_cta": "",
-      "secondary_cta": "Track My Order",
-      "visual_direction": ""
-    },
-    "sections": [
-      { "section_name": "Featured Categories", "section_type": "categories", "headline": "", "description": "", "cta": "Browse All", "editable": true },
-      { "section_name": "New Arrivals", "section_type": "products", "headline": "", "description": "", "cta": "Shop Now", "editable": true },
-      { "section_name": "About Us", "section_type": "about", "headline": "", "description": "", "cta": "", "editable": true },
-      { "section_name": "Order Tracking", "section_type": "tracking", "headline": "", "description": "", "cta": "Track Order", "editable": true },
-      { "section_name": "Help & Support", "section_type": "help", "headline": "", "description": "", "cta": "Contact Us", "editable": true },
-      { "section_name": "FAQ", "section_type": "faq", "headline": "", "description": "", "cta": "", "editable": true }
-    ],
-    "footer": { "description": "", "links": ["Shop", "Track Order", "Contact", "About Us"], "contact_summary": "", "powered_by": "SellQuic" }
-  },
-  "categories": [
-    { "name": "", "description": "", "display_order": 1, "image_prompt": "", "editable": true },
-    { "name": "", "description": "", "display_order": 2, "image_prompt": "", "editable": true },
-    { "name": "", "description": "", "display_order": 3, "image_prompt": "", "editable": true },
-    { "name": "", "description": "", "display_order": 4, "image_prompt": "", "editable": true },
-    { "name": "", "description": "", "display_order": 5, "image_prompt": "", "editable": true }
-  ],
-  "products": [
-    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "image_prompt": "", "seo_keywords": [], "is_ai_placeholder": true, "is_vendor_confirmed": false },
-    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "image_prompt": "", "seo_keywords": [], "is_ai_placeholder": true, "is_vendor_confirmed": false },
-    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "image_prompt": "", "seo_keywords": [], "is_ai_placeholder": true, "is_vendor_confirmed": false },
-    { "name": "", "category": "", "short_description": "", "long_description": "", "price": "PLACEHOLDER", "currency": "GHS", "variants": [], "image_prompt": "", "seo_keywords": [], "is_ai_placeholder": true, "is_vendor_confirmed": false }
-  ],
-  "checkout": {
-    "recommended_flow": "",
-    "cart_enabled": true,
-    "whatsapp_order_enabled": true,
-    "checkout_cta": "",
-    "empty_cart_message": "",
-    "order_confirmation_message": "",
-    "payment_instruction_placeholder": ""
-  },
-  "delivery": {
-    "delivery_status": "draft",
-    "delivery_options": [],
-    "estimated_delivery_message": "",
-    "pickup_message": "",
-    "delivery_faq": [],
-    "missing_delivery_fields": ["delivery_zones", "delivery_fee", "dispatch_timeline"]
-  },
-  "seo": {
-    "page_title": "",
-    "meta_description": "",
-    "category_keywords": [],
-    "product_keywords": [],
-    "social_share_title": "",
-    "social_share_description": ""
-  },
-  "marketing": {
-    "launch_announcement": "",
-    "whatsapp_broadcast": "",
-    "instagram_caption": "",
-    "facebook_caption": "",
-    "promo_banner_text": "",
-    "customer_review_request": "",
-    "first_week_growth_suggestions": []
-  },
-  "vendor_dashboard": {
-    "store_completion_score": 65,
-    "onboarding_checklist": [],
-    "missing_setup_items": [],
-    "recommended_next_actions": []
-  },
-  "publish_readiness": {
-    "status": "needs_vendor_input",
-    "checks": {
-      "has_business_name": true,
-      "has_category": true,
-      "has_storefront": true,
-      "has_product_or_inquiry_flow": true,
-      "has_contact_method": true,
-      "has_currency": true,
-      "has_checkout_or_inquiry_path": true,
-      "has_delivery_or_pickup_info": false,
-      "has_payment_method_or_instruction": false,
-      "is_mobile_friendly": true,
-      "has_footer": true,
-      "has_seo_metadata": true,
-      "has_no_critical_policy_issue": true
-    },
-    "required_vendor_inputs": ["payment_method", "delivery_zones", "product_images", "real_pricing"]
-  }
-}
-
-Category rules:
-- theme_category must be one of: fashion, food, beauty, electronics, furniture, groceries, services, general
-- Fashion: elegant boutique tone, size/color variants, featured collections
-- Food: warm appetizing tone, menu sections, operating hours hints, WhatsApp ordering
-- Beauty: clean luxury tone, product benefits, usage notes, skin/hair categories
-- Electronics: tech specs tone, warranty placeholders, comparison-style descriptions
-- Furniture: calm spacious tone, room-based categories, material/size placeholders
-- Groceries: fresh practical tone, fast-shopping layout, reorder friendly
-- Services: professional tone, service packages, booking/inquiry CTA
-- categories: exactly 5 entries specific to the vendor's category
-- products: exactly 4 realistic AI placeholder products for the category
-- onboarding_checklist: exactly 6 specific actionable steps for this vendor
-- marketing content: ready to copy-paste immediately
-- Return ONLY the JSON object`;
-
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-      systemInstruction,
-    });
-
-    const raw = result.response.text().trim();
-    const match = raw.match(/\{[\s\S]*\}/);
-    if (!match) return null;
-
-    const autoStoreConfig = JSON.parse(match[0]);
-
-    // Extract backward-compatible storefrontConfig for existing components
-    const aboutSection = autoStoreConfig.storefront?.sections?.find(
-      (s: any) => s.section_type === 'about'
-    );
-    const storefrontConfig = {
-      storefront_name: businessName,
-      theme_name: autoStoreConfig.theme?.theme_name || '',
-      theme_category: autoStoreConfig.theme?.theme_category || category,
-      color_palette: autoStoreConfig.theme?.color_palette || {},
-      typography: autoStoreConfig.theme?.typography || {},
-      navigation: autoStoreConfig.storefront?.navigation || [],
-      hero: autoStoreConfig.storefront?.hero || {},
-      categories: autoStoreConfig.categories || [],
-      featured_products: autoStoreConfig.products || [],
-      catalog_layout: { style: 'grid', filters: ['category', 'price'], sorting_options: ['newest', 'price_asc', 'price_desc'], product_card_style: 'standard' },
-      cart: autoStoreConfig.checkout ? {
-        empty_state: autoStoreConfig.checkout.empty_cart_message || '',
-        subtotal_label: 'Subtotal',
-        checkout_cta: autoStoreConfig.checkout.checkout_cta || 'Proceed to Checkout',
-      } : {},
-      order_tracking: autoStoreConfig.storefront?.sections?.find((s: any) => s.section_type === 'tracking') || {},
-      help_section: autoStoreConfig.storefront?.sections?.find((s: any) => s.section_type === 'help') || {},
-      about_section: {
-        headline: aboutSection?.headline || `About ${businessName}`,
-        description: aboutSection?.description || autoStoreConfig.business_identity?.long_description || '',
-      },
-      contact_section: { email, phone, whatsapp_enabled: true },
-      footer: autoStoreConfig.storefront?.footer || {},
-      seo: {
-        page_title: autoStoreConfig.seo?.page_title || businessName,
-        meta_description: autoStoreConfig.seo?.meta_description || '',
-        keywords: autoStoreConfig.seo?.category_keywords || [],
-      },
-    };
-
-    return { storefrontConfig, autoStoreConfig };
-  } catch (err) {
-    console.error('[generateStorefrontConfig]', err);
-    return null;
-  }
+) {
+  return generateAutoStoreConfig({ businessName, category, subcategory, email, phone });
 }
 
 function generateReferralCode(name: string) {
@@ -842,5 +636,47 @@ export async function verifyOtpAction(
       success: false,
       message: e.message || 'Verification failed. Please try again.',
     };
+  }
+}
+
+// ─── Regenerate AI store config from the dashboard ───────────────────────────
+export async function regenerateStoreConfigAction(
+  storeId: string,
+): Promise<{ success: boolean; message?: string }> {
+  try {
+    const storeRef = db.collection('stores').doc(storeId);
+    const storeSnap = await storeRef.get();
+    if (!storeSnap.exists) {
+      return { success: false, message: 'Store not found.' };
+    }
+
+    const store = storeSnap.data()!;
+    const sellerSnap = await db.collection('users').doc(store.sellerId).get();
+    const seller = sellerSnap.data();
+
+    const result = await generateAutoStoreConfig({
+      businessName: store.name ?? '',
+      category: store.category ?? 'general',
+      subcategory: store.subcategory ?? '',
+      email: seller?.email ?? store.email ?? '',
+      phone: seller?.phone ?? store.sellerPhone ?? '',
+    });
+
+    if (!result) {
+      return { success: false, message: 'AI generation failed. Please try again.' };
+    }
+
+    await storeRef.update({
+      storefrontConfig: result.storefrontConfig,
+      autoStoreConfig: result.autoStoreConfig,
+      storefrontGeneratedAt: FieldValue.serverTimestamp(),
+    });
+
+    revalidatePath(`/dashboard/stores/${storeId}/launch-kit`);
+    return { success: true };
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[regenerateStoreConfigAction]', err);
+    return { success: false, message };
   }
 }
