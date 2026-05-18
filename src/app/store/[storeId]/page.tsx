@@ -16,8 +16,8 @@ function CategoryStoreLayout() {
       <div className="flex flex-col">
         <StoreHero />
         <CategorySection />
-        <StoreProductGrid />
         <StoreFeaturesSection />
+        <StoreProductGrid />
         <AboutSection />
         <FaqSection />
       </div>
@@ -29,8 +29,8 @@ function CategoryStoreLayout() {
       <div className="flex flex-col">
         <StoreHero />
         <CategorySection />
-        <StoreProductGrid />
         <StoreFeaturesSection />
+        <StoreProductGrid />
         <AboutSection />
       </div>
     );
@@ -41,8 +41,8 @@ function CategoryStoreLayout() {
       <div className="flex flex-col">
         <StoreHero />
         <CategorySection />
-        <StoreProductGrid />
         <StoreFeaturesSection />
+        <StoreProductGrid />
         <AboutSection />
         <FaqSection />
       </div>
@@ -54,8 +54,8 @@ function CategoryStoreLayout() {
       <div className="flex flex-col">
         <StoreHero />
         <CategorySection />
-        <StoreProductGrid />
         <StoreFeaturesSection />
+        <StoreProductGrid />
       </div>
     );
   }
@@ -65,8 +65,8 @@ function CategoryStoreLayout() {
       <div className="flex flex-col">
         <StoreHero />
         <CategorySection />
-        <StoreProductGrid />
         <StoreFeaturesSection />
+        <StoreProductGrid />
         <AboutSection />
       </div>
     );
@@ -77,8 +77,8 @@ function CategoryStoreLayout() {
       <div className="flex flex-col">
         <StoreHero />
         <CategorySection />
-        <StoreProductGrid />
         <StoreFeaturesSection />
+        <StoreProductGrid />
       </div>
     );
   }
@@ -88,8 +88,8 @@ function CategoryStoreLayout() {
       <div className="flex flex-col">
         <StoreHero />
         <CategorySection />
-        <StoreProductGrid />
         <StoreFeaturesSection />
+        <StoreProductGrid />
         <AboutSection />
         <FaqSection />
       </div>
@@ -101,8 +101,8 @@ function CategoryStoreLayout() {
     <div className="flex flex-col">
       <StoreHero />
       <CategorySection />
-      <StoreProductGrid />
       <StoreFeaturesSection />
+      <StoreProductGrid />
       <AboutSection />
       <FaqSection />
     </div>
