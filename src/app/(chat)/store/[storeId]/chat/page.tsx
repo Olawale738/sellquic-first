@@ -35,17 +35,17 @@ interface PageProps {
 
 async function getStoreDataForChat(identifier: string): Promise<StoreChatData | null> {
   try {
+    const normalized = identifier.toLowerCase().trim();
     const storesRef = db.collection('stores');
 
-    // The identifier is the custom domain or subdomain
-    const storeQuery = identifier.includes('.')
-      ? storesRef.where('customDomain', '==', identifier).limit(1)
-      : storesRef.where('subdomain', '==', identifier).limit(1);
+    const storeQuery = normalized.includes('.')
+      ? storesRef.where('customDomain', '==', normalized).limit(1)
+      : storesRef.where('subdomain', '==', normalized).limit(1);
 
     const storeSnapshot = await storeQuery.get();
 
     if (storeSnapshot.empty) {
-      console.error(`[Chat Page] No store found for identifier: ${identifier}`);
+      console.error(`[Chat Page] No store found for identifier: ${normalized}`);
       return null;
     }
 

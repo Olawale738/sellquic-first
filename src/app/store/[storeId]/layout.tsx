@@ -40,23 +40,24 @@ interface StoreData {
 
 async function getStoreData(identifier: string): Promise<StoreData | null> {
   try {
+    const normalized = identifier.toLowerCase().trim();
     const storesRef = db.collection("stores");
     let storeQuery;
-    
-    if (identifier.includes('.')) {
-        console.log(`[Store Layout] Querying custom domain: ${identifier}`);
-        storeQuery = storesRef.where("customDomain", "==", identifier).limit(1);
+
+    if (normalized.includes('.')) {
+        console.log(`[Store Layout] Querying custom domain: ${normalized}`);
+        storeQuery = storesRef.where("customDomain", "==", normalized).limit(1);
     } else {
-        console.log(`[Store Layout] Querying subdomain: ${identifier}`);
-        storeQuery = storesRef.where("subdomain", "==", identifier).limit(1);
+        console.log(`[Store Layout] Querying subdomain: ${normalized}`);
+        storeQuery = storesRef.where("subdomain", "==", normalized).limit(1);
     }
 
     const storeSnapshot = await storeQuery.get();
     console.log('🟣 CHAT DEBUG — STORES FOUND:', storeSnapshot.size);
 
     if (storeSnapshot.empty) {
-      console.log('🔴 CHAT DEBUG — STORE NOT FOUND, IDENTIFIER:', identifier);
-      console.error(`No store found for identifier: ${identifier}`);
+      console.log('🔴 CHAT DEBUG — STORE NOT FOUND, IDENTIFIER:', normalized);
+      console.error(`No store found for identifier: ${normalized}`);
       return null;
     }
 
