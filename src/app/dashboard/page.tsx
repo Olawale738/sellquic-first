@@ -67,6 +67,7 @@ export default function Dashboard() {
   const [visitors, setVisitors] = useState(0);
   const [dataLoading, setDataLoading] = useState(true);
   const [storeUrl, setStoreUrl] = useState('');
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
     if (activeStore?.customDomain) {
@@ -77,6 +78,13 @@ export default function Dashboard() {
       setStoreUrl(`${protocol}//${activeStore.subdomain}.${rootDomain}`);
     }
   }, [activeStore]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('newSignup') === 'true') {
+      setShowWelcome(true);
+      localStorage.removeItem('newSignup');
+    }
+  }, []);
 
 
   useEffect(() => {
@@ -205,12 +213,65 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
 
-        {user && (
-            <div className="mb-6">
+        {/* ── New Signup Welcome Banner ── */}
+      {showWelcome && storeUrl && (
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-600 text-white p-6 md:p-8 shadow-lg">
+          {/* Decorative blob */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl pointer-events-none" />
+          <button
+            onClick={() => setShowWelcome(false)}
+            className="absolute top-3 right-3 text-white/60 hover:text-white transition-colors text-xl leading-none"
+            aria-label="Dismiss"
+          >
+            ✕
+          </button>
+          <div className="relative">
+            <p className="text-sm font-semibold uppercase tracking-widest text-white/70 mb-1">🎉 Your store is live!</p>
+            <h2 className="text-2xl md:text-3xl font-bold mb-1">
+              Welcome to SellQuic, {(user as any)?.firstName || 'Seller'}!
+            </h2>
+            <p className="text-white/80 text-sm mb-5">
+              Your 7-day free trial has started. Your store is ready — share it with customers and start selling.
+            </p>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <div className="flex-1 flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium border border-white/30 max-w-sm">
+                <span className="truncate">{storeUrl}</span>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(storeUrl); toast({ title: 'Store link copied!' }); }}
+                  className="ml-auto flex-shrink-0 text-white/70 hover:text-white transition-colors"
+                  aria-label="Copy link"
+                >
+                  <Copy className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <a
+                  href={storeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-white text-purple-700 font-semibold text-sm px-4 py-2 rounded-full hover:bg-white/90 transition-colors shadow-sm"
+                >
+                  <Eye className="h-4 w-4" />
+                  View Store
+                </a>
+                <a
+                  href="/dashboard/products/new"
+                  className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-sm text-white font-semibold text-sm px-4 py-2 rounded-full hover:bg-white/30 border border-white/30 transition-colors"
+                >
+                  Add Products
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {user && !showWelcome && (
+            <div className="mb-2">
                 <h2 className="text-2xl font-bold">Welcome back, {(user as any).firstName}!</h2>
             </div>
         )}
-      
+
       <OnboardingSteps />
 
       {/* 1. UPGRADE BANNER (Appears once) */}

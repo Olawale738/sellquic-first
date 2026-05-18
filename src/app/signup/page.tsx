@@ -261,7 +261,7 @@ function SignupForm() {
         await signInWithEmailAndPassword(auth, formData.email, formData.password);
         localStorage.removeItem('affiliateRef');
         localStorage.setItem('newSignup', 'true');
-        window.location.href = '/dashboard/subscription';
+        window.location.href = '/dashboard';
         return;
       }
 
