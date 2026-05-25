@@ -490,6 +490,8 @@ const DEFAULT_CATEGORIES: Record<string, string[]> = {
   ],
 };
 
+const MAX_CATS = 20;
+
 function resolveDefaultCategories(category?: string): CategoryCard[] {
   const fallback = [
     'New Arrivals', 'Best Sellers', 'Featured', 'Sale',
@@ -504,6 +506,20 @@ function resolveDefaultCategories(category?: string): CategoryCard[] {
   return fallback.map((name, i) => ({ id: `def-${i}`, name }));
 }
 
+/**
+ * Keep the store's real categories first, then fill up to MAX_CATS
+ * with category-matched defaults — deduplicating by name.
+ */
+function fillToMax(base: CategoryCard[], storeCategory?: string): CategoryCard[] {
+  if (base.length >= MAX_CATS) return base.slice(0, MAX_CATS);
+  const usedNames = new Set(base.map((c) => c.name.toLowerCase().trim()));
+  const defaults = resolveDefaultCategories(storeCategory);
+  const extras = defaults
+    .filter((d) => !usedNames.has(d.name.toLowerCase().trim()))
+    .map((d, i) => ({ ...d, id: `fill-${i}` }));
+  return [...base, ...extras].slice(0, MAX_CATS);
+}
+
 export function CategorySection() {
   const { store, isDemo } = useStore();
 
@@ -514,23 +530,20 @@ export function CategorySection() {
   let categories: CategoryCard[] = [];
 
   if (store.categories?.length) {
-    categories = store.categories.slice(0, 20);
+    const base = (store.categories as CategoryCard[]).slice(0, MAX_CATS);
+    categories = fillToMax(base, store.category);
   } else if (store.storefrontConfig?.categories?.length) {
-    categories = (store.storefrontConfig.categories as { name: string; description?: string }[])
-      .slice(0, 20)
-      .map((cat, i) => ({
-        id: `ai-${i}`,
-        name: cat.name,
-        description: cat.description,
-      }));
+    const base = (store.storefrontConfig.categories as { name: string; description?: string }[])
+      .slice(0, MAX_CATS)
+      .map((cat, i) => ({ id: `ai-${i}`, name: cat.name, description: cat.description }));
+    categories = fillToMax(base, store.category);
   } else if (store.autoStoreConfig?.categories?.length) {
-    categories = store.autoStoreConfig.categories
-      .slice(0, 20)
+    const base = store.autoStoreConfig.categories
+      .slice(0, MAX_CATS)
       .map((cat: { name: string; description?: string }, i: number) => ({
-        id: `auto-${i}`,
-        name: cat.name,
-        description: cat.description,
+        id: `auto-${i}`, name: cat.name, description: cat.description,
       }));
+    categories = fillToMax(base, store.category);
   } else {
     categories = resolveDefaultCategories(store.category);
   }
