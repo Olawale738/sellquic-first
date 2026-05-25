@@ -423,15 +423,13 @@ const DEFAULT_CATEGORIES: Record<string, string[]> = {
   ],
   food: [
     'Meals', 'Snacks', 'Drinks', 'Catering', 'Breakfast',
-    'Lunch', 'Dinner', 'Desserts', 'Cakes', 'Pastries',
-    'Pizza', 'Burgers', 'Chicken', 'Seafood', 'Rice',
-    'Soups', 'Salads', 'Coffee', 'Smoothies', 'Vegan',
+    'Lunch', 'Dinner', 'Cakes', 'Pastries', 'Pizza',
+    'Burgers', 'Chicken', 'Salads',
   ],
   restaurant: [
-    'Main Course', 'Sides', 'Drinks', 'Desserts', 'Breakfast',
-    'Lunch', 'Dinner', 'Soups', 'Salads', 'Pizza',
-    'Burgers', 'Chicken', 'Seafood', 'Sushi', 'Rice',
-    'Snacks', 'Coffee', 'Tea', 'Catering', 'Vegan',
+    'Main Course', 'Sides', 'Drinks', 'Breakfast',
+    'Lunch', 'Dinner', 'Salads', 'Pizza',
+    'Burgers', 'Chicken', 'Sushi', 'Snacks', 'Tea', 'Catering',
   ],
   beauty: [
     'Skincare', 'Haircare', 'Makeup', 'Fragrance', 'Moisturizers',
