@@ -560,23 +560,16 @@ export function CategorySection() {
 
   let categories: CategoryCard[] = [];
 
+  // Use the store's manually-set categories first (most reliable source).
+  // storefrontConfig / autoStoreConfig are AI-generated and may contain
+  // category names whose Unsplash photos no longer exist — skip them.
   if (store.categories?.length) {
-    // Normalize — Firestore data can be strings OR objects with varying shapes
     const base = (store.categories as unknown[])
       .slice(0, MAX_CATS)
       .map(normalizeRaw);
     categories = fillToMax(base, store.category);
-  } else if (store.storefrontConfig?.categories?.length) {
-    const base = (store.storefrontConfig.categories as unknown[])
-      .slice(0, MAX_CATS)
-      .map(normalizeRaw);
-    categories = fillToMax(base, store.category);
-  } else if (store.autoStoreConfig?.categories?.length) {
-    const base = (store.autoStoreConfig.categories as unknown[])
-      .slice(0, MAX_CATS)
-      .map(normalizeRaw);
-    categories = fillToMax(base, store.category);
   } else {
+    // No manual categories — use clean category-matched defaults only
     categories = resolveDefaultCategories(store.category);
   }
 
