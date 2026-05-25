@@ -141,12 +141,12 @@ function resolveConfig(category?: string): FeatureConfig {
 
 // ─── Per-card accent palette — all use the store's primary brand colour ──────
 const PALETTE = [
-  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
-  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
-  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
-  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
-  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
-  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary' },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -180,7 +180,6 @@ export function StoreFeaturesSection() {
           {features.map((feature, i) => {
             const Icon    = ICON_MAP[feature.icon];
             const palette = PALETTE[i % PALETTE.length];
-            const num     = String(i + 1).padStart(2, '0');
 
             return (
               <div
@@ -191,16 +190,6 @@ export function StoreFeaturesSection() {
               >
                 {/* Coloured top accent bar */}
                 <div className={`absolute top-0 left-0 right-0 h-1 ${palette.bar}`} />
-
-                {/* Giant faded number decoration */}
-                <span
-                  aria-hidden
-                  className={`absolute -bottom-3 -right-1 text-[7rem] font-black
-                              leading-none select-none pointer-events-none
-                              ${palette.num}`}
-                >
-                  {num}
-                </span>
 
                 {/* Card body */}
                 <div className="relative z-10 p-6 md:p-7 flex flex-col gap-5">
