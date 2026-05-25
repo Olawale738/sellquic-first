@@ -132,10 +132,10 @@ export function CategorySection() {
   let categories: CategoryCard[] = [];
 
   if (store.categories?.length) {
-    categories = store.categories.slice(0, 8);
+    categories = store.categories.slice(0, 15);
   } else if (store.storefrontConfig?.categories?.length) {
     categories = (store.storefrontConfig.categories as { name: string; description?: string }[])
-      .slice(0, 8)
+      .slice(0, 15)
       .map((cat, i) => ({
         id: `ai-${i}`,
         name: cat.name,
@@ -143,7 +143,7 @@ export function CategorySection() {
       }));
   } else if (store.autoStoreConfig?.categories?.length) {
     categories = store.autoStoreConfig.categories
-      .slice(0, 8)
+      .slice(0, 15)
       .map((cat: { name: string; description?: string }, i: number) => ({
         id: `auto-${i}`,
         name: cat.name,
@@ -180,7 +180,11 @@ export function CategorySection() {
             ? 'grid-cols-1 sm:grid-cols-3'
             : categories.length <= 4
               ? 'grid-cols-2 sm:grid-cols-4'
-              : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4'
+              : categories.length <= 6
+                ? 'grid-cols-2 sm:grid-cols-3'
+                : categories.length <= 10
+                  ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-5'
+                  : 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-5'
         )}>
           {categories.map((cat) => {
             const gradient = gradientForName(cat.name);
@@ -225,7 +229,7 @@ export function CategorySection() {
                   <p className="font-bold text-white text-sm sm:text-base leading-snug drop-shadow-sm">
                     {cat.name}
                   </p>
-                  {cat.description && (
+                  {cat.description && cat.description.toLowerCase() !== cat.name.toLowerCase() && (
                     <p className="mt-0.5 text-white/75 text-xs line-clamp-1 drop-shadow-sm">
                       {cat.description}
                     </p>
