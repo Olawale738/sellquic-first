@@ -8,6 +8,7 @@ import { SearchForm } from "./store/SearchForm";
 import { cn } from "@/lib/utils";
 import { getStoreBasePath } from "@/lib/url";
 import { ShieldCheck, Truck, Zap, Star, Clock, Leaf } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const CATEGORY_HERO_IMAGES: Record<string, string> = {
   fashion:     'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1400&h=700&fit=crop&auto=format&q=80',
@@ -108,6 +109,22 @@ export function StoreHero() {
   const subheadline = store?.tagline || aiHero?.subheadline || getTagline(store?.category);
   const primaryCta = store?.heroCtaText || aiHero?.primary_cta || 'Shop Now';
   const trust = getTrust(store?.category);
+
+  // Cycling trust ticker state
+  const [trustIdx, setTrustIdx] = useState(0);
+  const [tickerVisible, setTickerVisible] = useState(true);
+
+  useEffect(() => {
+    if (trust.length <= 1) return;
+    const id = setInterval(() => {
+      setTickerVisible(false);
+      setTimeout(() => {
+        setTrustIdx((i) => (i + 1) % trust.length);
+        setTickerVisible(true);
+      }, 280);
+    }, 2800);
+    return () => clearInterval(id);
+  }, [trust.length]);
 
   return (
     <section className={cn('relative overflow-hidden min-h-[520px] flex flex-col')}>
@@ -212,25 +229,23 @@ export function StoreHero() {
         </div>
       </div>
 
-      {/* Trust strip */}
+      {/* Cycling trust ticker */}
       <div className={cn(
         'relative z-10 border-t',
         isPhotoMode
           ? 'border-white/20 bg-black/35 backdrop-blur-sm'
           : 'border-border bg-background/80'
       )}>
-        <div className="container mx-auto px-4 md:px-6 py-3.5">
-          <div className={cn(
-            'flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-10 text-sm',
-            isPhotoMode ? 'text-white/80' : 'text-muted-foreground'
-          )}>
-            {trust.map(({ icon: Icon, text }, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <Icon className={cn('h-4 w-4 shrink-0', isPhotoMode ? 'text-white/70' : 'text-primary')} />
-                <span className="font-medium">{text}</span>
-              </div>
-            ))}
-          </div>
+        <div className="py-2.5 text-center overflow-hidden h-8 flex items-center justify-center">
+          <span
+            className={cn(
+              'text-[11px] font-bold uppercase tracking-[0.18em] transition-all duration-280',
+              isPhotoMode ? 'text-white/75' : 'text-muted-foreground',
+              tickerVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2',
+            )}
+          >
+            {trust[trustIdx]?.text}
+          </span>
         </div>
       </div>
     </section>
