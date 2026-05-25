@@ -139,44 +139,14 @@ function resolveConfig(category?: string): FeatureConfig {
   return DEFAULT;
 }
 
-// ─── Per-card accent palette ───────────────────────────────────────────────────
+// ─── Per-card accent palette — all use the store's primary brand colour ──────
 const PALETTE = [
-  {
-    iconBg:   'bg-primary/10',
-    iconText: 'text-primary',
-    bar:      'bg-primary',
-    num:      'text-primary/8',
-  },
-  {
-    iconBg:   'bg-emerald-500/10',
-    iconText: 'text-emerald-500',
-    bar:      'bg-emerald-500',
-    num:      'text-emerald-500/8',
-  },
-  {
-    iconBg:   'bg-amber-500/10',
-    iconText: 'text-amber-500',
-    bar:      'bg-amber-500',
-    num:      'text-amber-500/8',
-  },
-  {
-    iconBg:   'bg-blue-500/10',
-    iconText: 'text-blue-500',
-    bar:      'bg-blue-500',
-    num:      'text-blue-500/8',
-  },
-  {
-    iconBg:   'bg-rose-500/10',
-    iconText: 'text-rose-500',
-    bar:      'bg-rose-500',
-    num:      'text-rose-500/8',
-  },
-  {
-    iconBg:   'bg-violet-500/10',
-    iconText: 'text-violet-500',
-    bar:      'bg-violet-500',
-    num:      'text-violet-500/8',
-  },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
+  { iconBg: 'bg-primary/10', iconText: 'text-primary', bar: 'bg-primary', num: 'text-primary/8' },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
