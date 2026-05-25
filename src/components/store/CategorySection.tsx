@@ -68,13 +68,13 @@ const CATEGORY_PHOTO: Record<string, string> = {
   snacks:             u('1551024506-0bccd828d307'),
   drinks:             u('1544145945-f90425340c7e'),
   beverages:          u('1544145945-f90425340c7e'),
-  smoothies:          u('1570197788417-0e82375c9371'),
-  juice:              u('1570197788417-0e82375c9371'),
-  coffee:             u('1509042239860-f550ce710b93'),
-  tea:                u('1556742205-e0d32a35c0f0'),
+  smoothies:          u('1544145945-f90425340c7e'),   // was broken
+  juice:              u('1544145945-f90425340c7e'),    // was broken
+  coffee:             u('1544145945-f90425340c7e'),    // was broken
+  tea:                u('1544145945-f90425340c7e'),
   catering:           u('1414235077428-338989a2e8c0'),
-  desserts:           u('1563729784474-d77dbb933a9e'),
-  cakes:              u('1558636225-5e27f1b506f0'),
+  desserts:           u('1509440159596-0249088772ff'), // was broken
+  cakes:              u('1509440159596-0249088772ff'),
   pastries:           u('1509440159596-0249088772ff'),
   bread:              u('1509440159596-0249088772ff'),
   breakfast:          u('1533089860892-a7c6f0a88666'),
@@ -82,14 +82,14 @@ const CATEGORY_PHOTO: Record<string, string> = {
   pizza:              u('1565299624946-b28f40a0ae38'),
   burgers:            u('1568901346375-23c9450c58cd'),
   chicken:            u('1546069901-ba9599a7e63c'),
-  rice:               u('1512621776951-a57141f2eefd'),
-  sides:              u('1512621776951-a57141f2eefd'),
-  soups:              u('1547592180-85f173d888e0'),
-  salads:             u('1512621776951-a57141f2eefd'),
-  vegan:              u('1512621776951-a57141f2eefd'),
-  vegetarian:         u('1512621776951-a57141f2eefd'),
-  seafood:            u('1565557623262-b51ff2765ca7'),
-  sushi:              u('1556742205-e0d32a35c0f0'),
+  rice:               u('1546069901-ba9599a7e63c'),    // was broken
+  sides:              u('1546069901-ba9599a7e63c'),    // was broken
+  soups:              u('1414235077428-338989a2e8c0'), // was broken
+  salads:             u('1546069901-ba9599a7e63c'),    // was broken
+  vegan:              u('1546069901-ba9599a7e63c'),    // was broken
+  vegetarian:         u('1546069901-ba9599a7e63c'),    // was broken
+  seafood:            u('1414235077428-338989a2e8c0'), // was broken
+  sushi:              u('1555396273-367ea4eb4db5'),
   wraps:              u('1551024506-0bccd828d307'),
   sandwiches:         u('1551024506-0bccd828d307'),
   pasta:              u('1555396273-367ea4eb4db5'),
@@ -98,8 +98,8 @@ const CATEGORY_PHOTO: Record<string, string> = {
   wings:              u('1546069901-ba9599a7e63c'),
   grills:             u('1546069901-ba9599a7e63c'),
   bbq:                u('1546069901-ba9599a7e63c'),
-  'ice cream':        u('1563729784474-d77dbb933a9e'),
-  chocolate:          u('1563729784474-d77dbb933a9e'),
+  'ice cream':        u('1509440159596-0249088772ff'), // was broken
+  chocolate:          u('1509440159596-0249088772ff'), // was broken
   food:               u('1414235077428-338989a2e8c0'),
 
   // ── Beauty & Cosmetics ──────────────────────────────────────────────────────
