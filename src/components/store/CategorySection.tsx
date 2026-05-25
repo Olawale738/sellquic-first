@@ -368,7 +368,18 @@ const STORE_CATEGORY_FALLBACK: Record<string, string> = {
   sports:      u('1461896836934-ffe607ba8211'),
 };
 
-function photoForCategory(name: string, storeCategory?: string): string {
+function photoForCategory(name: string | undefined | null, storeCategory?: string): string {
+  // Guard — if name is missing fall straight to store-category or ultimate fallback
+  if (!name || typeof name !== 'string') {
+    if (storeCategory) {
+      const sc = storeCategory.toLowerCase().trim();
+      for (const [k, url] of Object.entries(STORE_CATEGORY_FALLBACK)) {
+        if (sc.includes(k)) return url;
+      }
+    }
+    return u('1441986300917-64674bd600d8');
+  }
+
   const key = name.toLowerCase().trim();
 
   // 1. Exact match
@@ -492,6 +503,28 @@ const DEFAULT_CATEGORIES: Record<string, string[]> = {
 
 const MAX_CATS = 20;
 
+/**
+ * Normalize any raw category item (string, object with name/categoryName/title)
+ * into a safe CategoryCard. Never throws.
+ */
+function normalizeRaw(raw: unknown, idx: number): CategoryCard {
+  if (typeof raw === 'string' && raw.trim()) {
+    return { id: `raw-${idx}`, name: raw.trim() };
+  }
+  if (raw && typeof raw === 'object') {
+    const r = raw as Record<string, unknown>;
+    const name =
+      (typeof r.name === 'string' && r.name.trim()) ||
+      (typeof r.categoryName === 'string' && r.categoryName.trim()) ||
+      (typeof r.title === 'string' && r.title.trim()) ||
+      `Category ${idx + 1}`;
+    const id = (typeof r.id === 'string' && r.id) || `raw-${idx}`;
+    const description = typeof r.description === 'string' ? r.description : undefined;
+    return { id, name, description };
+  }
+  return { id: `raw-${idx}`, name: `Category ${idx + 1}` };
+}
+
 function resolveDefaultCategories(category?: string): CategoryCard[] {
   const fallback = [
     'New Arrivals', 'Best Sellers', 'Featured', 'Sale',
@@ -507,15 +540,15 @@ function resolveDefaultCategories(category?: string): CategoryCard[] {
 }
 
 /**
- * Keep the store's real categories first, then fill up to MAX_CATS
- * with category-matched defaults — deduplicating by name.
+ * Keep store's real categories first, fill remainder up to MAX_CATS
+ * with category-matched defaults — deduplicating by lowercase name.
  */
 function fillToMax(base: CategoryCard[], storeCategory?: string): CategoryCard[] {
   if (base.length >= MAX_CATS) return base.slice(0, MAX_CATS);
-  const usedNames = new Set(base.map((c) => c.name.toLowerCase().trim()));
+  const usedNames = new Set(base.map((c) => (c.name || '').toLowerCase().trim()));
   const defaults = resolveDefaultCategories(storeCategory);
   const extras = defaults
-    .filter((d) => !usedNames.has(d.name.toLowerCase().trim()))
+    .filter((d) => !usedNames.has((d.name || '').toLowerCase().trim()))
     .map((d, i) => ({ ...d, id: `fill-${i}` }));
   return [...base, ...extras].slice(0, MAX_CATS);
 }
@@ -530,19 +563,20 @@ export function CategorySection() {
   let categories: CategoryCard[] = [];
 
   if (store.categories?.length) {
-    const base = (store.categories as CategoryCard[]).slice(0, MAX_CATS);
+    // Normalize — Firestore data can be strings OR objects with varying shapes
+    const base = (store.categories as unknown[])
+      .slice(0, MAX_CATS)
+      .map(normalizeRaw);
     categories = fillToMax(base, store.category);
   } else if (store.storefrontConfig?.categories?.length) {
-    const base = (store.storefrontConfig.categories as { name: string; description?: string }[])
+    const base = (store.storefrontConfig.categories as unknown[])
       .slice(0, MAX_CATS)
-      .map((cat, i) => ({ id: `ai-${i}`, name: cat.name, description: cat.description }));
+      .map(normalizeRaw);
     categories = fillToMax(base, store.category);
   } else if (store.autoStoreConfig?.categories?.length) {
-    const base = store.autoStoreConfig.categories
+    const base = (store.autoStoreConfig.categories as unknown[])
       .slice(0, MAX_CATS)
-      .map((cat: { name: string; description?: string }, i: number) => ({
-        id: `auto-${i}`, name: cat.name, description: cat.description,
-      }));
+      .map(normalizeRaw);
     categories = fillToMax(base, store.category);
   } else {
     categories = resolveDefaultCategories(store.category);
@@ -582,17 +616,18 @@ export function CategorySection() {
                   : 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-5'
         )}>
           {categories.map((cat) => {
-            const photo = photoForCategory(cat.name, store?.category);
+            const label = cat.name || 'Category';
+            const photo = photoForCategory(label, store?.category);
 
             return (
               <Link
                 key={cat.id}
-                href={`${basePath}/category/${slugify(cat.name)}`}
+                href={`${basePath}/category/${slugify(label)}`}
                 className="group relative overflow-hidden rounded-2xl aspect-[4/3] flex flex-col justify-end p-4 transition-all hover:-translate-y-1 hover:shadow-xl"
               >
                 <Image
                   src={photo}
-                  alt={cat.name}
+                  alt={label}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
@@ -606,9 +641,9 @@ export function CategorySection() {
                 {/* Text content */}
                 <div className="relative z-10">
                   <p className="font-bold text-white text-sm sm:text-base leading-snug drop-shadow-sm">
-                    {cat.name}
+                    {label}
                   </p>
-                  {cat.description && cat.description.toLowerCase() !== cat.name.toLowerCase() && (
+                  {cat.description && cat.description.toLowerCase() !== label.toLowerCase() && (
                     <p className="mt-0.5 text-white/75 text-xs line-clamp-1 drop-shadow-sm">
                       {cat.description}
                     </p>
